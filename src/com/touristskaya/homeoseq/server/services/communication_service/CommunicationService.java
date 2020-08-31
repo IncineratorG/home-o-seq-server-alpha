@@ -1,7 +1,5 @@
 package com.touristskaya.homeoseq.server.services.communication_service;
 
-import com.google.gson.Gson;
-import com.touristskaya.homeoseq.common.TestObject;
 import com.touristskaya.homeoseq.common.actions.ActionsDispatcher;
 import com.touristskaya.homeoseq.common.actions.action.Action;
 import com.touristskaya.homeoseq.common.communication_bridge.CommunicationBridge;
@@ -12,10 +10,6 @@ import com.touristskaya.homeoseq.common.service.ServiceActions;
 import com.touristskaya.homeoseq.common.system_events_handler.SystemEventsHandler;
 import com.touristskaya.homeoseq.server.system_actions.dispatcher.SystemActionsDispatcher;
 
-import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.Scanner;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class CommunicationService extends Thread implements Service {

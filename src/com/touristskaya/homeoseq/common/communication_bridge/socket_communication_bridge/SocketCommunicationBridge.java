@@ -11,18 +11,16 @@ import java.util.function.Consumer;
 
 public class SocketCommunicationBridge extends Thread implements CommunicationBridge {
     private ServerSocket mServerSocket;
-    private Socket mSocket;
     private Consumer<String> mDataConsumer;
-    private Thread mThread;
     private PrintWriter mPrintWriter;
 
     public SocketCommunicationBridge() {
-        mThread = new Thread(this);
+
     }
 
     @Override
     public void open() {
-        mThread.start();
+        start();
     }
 
     @Override
@@ -54,20 +52,17 @@ public class SocketCommunicationBridge extends Thread implements CommunicationBr
     public void run() {
         try {
             mServerSocket = new ServerSocket(9991);
-            mSocket = mServerSocket.accept();
+            Socket socket = mServerSocket.accept();
 
-            InputStream inputToServer = mSocket.getInputStream();
+            InputStream inputToServer = socket.getInputStream();
 
-            OutputStream outputFromServer = mSocket.getOutputStream();
+            OutputStream outputFromServer = socket.getOutputStream();
 
             Scanner scanner = new Scanner(inputToServer, "UTF-8");
             mPrintWriter = new PrintWriter(new OutputStreamWriter(outputFromServer, "UTF-8"), true);
 
-//            serverPrintOut.println("SocketCommunicationBridge");
-
             while(scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                mDataConsumer.accept(line);
+                mDataConsumer.accept(scanner.nextLine());
             }
         } catch (IOException e) {
             e.printStackTrace();
