@@ -1,31 +1,45 @@
 package com.touristskaya.homeoseq.server.common.service;
 
 import com.touristskaya.homeoseq.server.common.actions.action.Action;
+import com.touristskaya.homeoseq.server.common.notifier.Notifier;
+import com.touristskaya.homeoseq.server.common.notifier.events.EventHandler;
 import com.touristskaya.homeoseq.server.common.notifier.events.EventsSource;
+import com.touristskaya.homeoseq.server.common.notifier.subscription.UnsubscribeHandler;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
-public class ActionsBuffer {
+public class ActionsBuffer implements EventsSource {
+    public static final String NEW_ACTION_AVAILABLE_EVENT = "NEW_ACTION_AVAILABLE_EVENT";
+
     private EventsSource mEventsSource;
     private ServiceActions mServiceActions;
     private Set<String> mServiceActionTypes;
     private List<Action> mAvailableActions;
+    private Notifier mNotifier;
 
-    public ActionsBuffer(EventsSource eventsSource, String actionCreateEvent, ServiceActions serviceActions) {
+    public ActionsBuffer(EventsSource eventsSource, String newActionEvent, ServiceActions serviceActions) {
+        mNotifier = new Notifier();
+
         mAvailableActions = new CopyOnWriteArrayList<>();
 
         mServiceActions = serviceActions;
         mServiceActionTypes = new HashSet<>(mServiceActions.getTypes());
 
         mEventsSource = eventsSource;
-        mEventsSource.subscribe(actionCreateEvent, (actionData) -> {
+        mEventsSource.subscribe(newActionEvent, (actionData) -> {
             Action action = (Action) actionData;
             if (mServiceActionTypes.contains(action.getType())) {
                 saveAction(action);
+                mNotifier.notify(NEW_ACTION_AVAILABLE_EVENT, null);
             }
         });
+    }
+
+    @Override
+    public UnsubscribeHandler subscribe(String eventType, EventHandler handler) {
+        return mNotifier.subscribe(eventType, handler);
     }
 
     public boolean hasAvailableActions() {

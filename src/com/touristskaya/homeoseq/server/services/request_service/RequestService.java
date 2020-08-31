@@ -1,6 +1,9 @@
 package com.touristskaya.homeoseq.server.services.request_service;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.touristskaya.homeoseq.server.common.actions.ActionsDispatcher;
+import com.touristskaya.homeoseq.server.common.actions.action.Action;
 import com.touristskaya.homeoseq.server.common.service.ActionsBuffer;
 import com.touristskaya.homeoseq.server.common.service.Service;
 import com.touristskaya.homeoseq.server.common.service.ServiceActions;
@@ -9,6 +12,8 @@ import com.touristskaya.homeoseq.server.system_actions.dispatcher.SystemActionsD
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class RequestService extends Thread implements Service {
@@ -40,9 +45,7 @@ public class RequestService extends Thread implements Service {
         try(ServerSocket serverSocket = new ServerSocket(9991)) {
             Socket connectionSocket = serverSocket.accept();
 
-            //Create Input&Outputstreams for the connection
             InputStream inputToServer = connectionSocket.getInputStream();
-//            InputStreamReader reader = new InputStreamReader(inputToServer);
             BufferedReader bufReader = new BufferedReader(new InputStreamReader(inputToServer));
 
             OutputStream outputFromServer = connectionSocket.getOutputStream();
@@ -59,9 +62,11 @@ public class RequestService extends Thread implements Service {
             while(!done && scanner.hasNextLine()) {
                 String line = scanner.nextLine();
 
-                System.out.println(line);
+                processReceivedData(line);
 
-                serverPrintOut.println("Echo from <Your Name Here> Server: " + line);
+//                System.out.println(line);
+
+//                serverPrintOut.println("Echo from <Your Name Here> Server: " + line);
 
                 if(line.toLowerCase().trim().equals("peace")) {
                     System.out.println("DONE");
@@ -72,5 +77,40 @@ public class RequestService extends Thread implements Service {
             System.out.println("ERROR");
             e.printStackTrace();
         }
+    }
+
+    private void processReceivedData(String data) {
+//        Gson gson = new GsonBuilder()
+//                .setLenient()
+//                .create();
+
+        Gson gson = new Gson();
+
+        TestObject s = gson.fromJson(data, TestObject.class);
+
+        System.out.println(s.a + " - " + s.s);
+
+//        System.out.println("HERE: " + data);
+//
+//        int a = 11;
+//        String s = "string";
+//        List<String> list = new ArrayList<>();
+//        list.add("A");
+//        list.add("B");
+//        list.add("C");
+//
+//        TestObject t = new TestObject(a, s, list);
+//
+//        Gson g1 = new Gson();
+//        String serialized = g1.toJson(t);
+//
+//        System.out.println(serialized);
+//
+//        Gson g2 = new Gson();
+//        TestObject to = g2.fromJson(serialized, TestObject.class);
+//
+//        System.out.println("DESER: " + to.a);
+
+//        Action a = new Action()
     }
 }
