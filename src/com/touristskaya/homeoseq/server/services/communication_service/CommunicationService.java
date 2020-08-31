@@ -1,7 +1,11 @@
 package com.touristskaya.homeoseq.server.services.communication_service;
 
 import com.google.gson.Gson;
+import com.touristskaya.homeoseq.common.TestObject;
 import com.touristskaya.homeoseq.common.actions.ActionsDispatcher;
+import com.touristskaya.homeoseq.common.actions.action.Action;
+import com.touristskaya.homeoseq.common.communication_bridge.CommunicationBridge;
+import com.touristskaya.homeoseq.common.communication_bridge.socket_communication_bridge.SocketCommunicationBridge;
 import com.touristskaya.homeoseq.common.service.ActionsBuffer;
 import com.touristskaya.homeoseq.common.service.Service;
 import com.touristskaya.homeoseq.common.service.ServiceActions;
@@ -12,23 +16,34 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class CommunicationService extends Thread implements Service {
+    private LinkedBlockingQueue<Action> mActionsQueue = new LinkedBlockingQueue<>();
+
     private ActionsDispatcher mActionsDispatcher;
     private CommunicationServiceActions mServiceActions;
     private ActionsBuffer mActionsBuffer;
-    private ServerSocket mServerSocket;
-    private Socket mSocket;
-    private boolean mRunning;
+    private CommunicationBridge mSocketCommunicationBridge;
 
     public CommunicationService(ActionsDispatcher actionsDispatcher) {
-        mRunning = true;
-
         mActionsDispatcher = actionsDispatcher;
         mServiceActions = new CommunicationServiceActions();
         mActionsBuffer = new ActionsBuffer(mActionsDispatcher,
                 SystemActionsDispatcher.NEW_ACTION_EVENT,
                 mServiceActions);
+        mActionsBuffer.subscribe(ActionsBuffer.NEW_ACTION_AVAILABLE_EVENT, (data) -> {
+            try {
+                mActionsQueue.put(mActionsBuffer.takeLatest());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+
+        mSocketCommunicationBridge = new SocketCommunicationBridge();
+        mSocketCommunicationBridge.onReceived(s -> {
+            SystemEventsHandler.onInfo("RECEIVED: " + s);
+        });
     }
 
     @Override
@@ -43,64 +58,103 @@ public class CommunicationService extends Thread implements Service {
 
     @Override
     public void stopService() {
-        mRunning = false;
-
-        try {
-            mServerSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         SystemEventsHandler.onInfo("CommunicationService->stopService()");
+        mSocketCommunicationBridge.close();
+
+        mActionsDispatcher.dispatch(mServiceActions.stopServiceAction());
     }
 
     @Override
     public void run() {
-        try {
-            mServerSocket = new ServerSocket(9991);
+        mSocketCommunicationBridge.open();
 
-            mSocket = mServerSocket.accept();
+        while (true) {
+            try {
+                Action action = mActionsQueue.take();
 
-            InputStream inputToServer = mSocket.getInputStream();
-            BufferedReader bufReader = new BufferedReader(new InputStreamReader(inputToServer));
+                if (action.getType().equals(mServiceActions.SEND_TEST_DATA)) {
+                    String data = (String) action.getPayload();
 
-            OutputStream outputFromServer = mSocket.getOutputStream();
+                    SystemEventsHandler.onInfo("SEND_TEST_DATA: " + data);
 
-            Scanner scanner = new Scanner(inputToServer, "UTF-8");
-            PrintWriter serverPrintOut = new PrintWriter(new OutputStreamWriter(outputFromServer, "UTF-8"), true);
+                    mSocketCommunicationBridge.send(data);
 
-            serverPrintOut.println("Hello World! Enter Peace to exit.");
-
-            //Have the server take input from the client and echo it back
-            //This should be placed in a loop that listens for a terminator text e.g. bye
-            boolean done = false;
-
-            while(!done && scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-
-                processReceivedData(line);
-
-//                System.out.println(line);
-
-//                serverPrintOut.println("Echo from <Your Name Here> Server: " + line);
-
-                if(line.toLowerCase().trim().equals("peace")) {
-                    System.out.println("DONE");
-                    done = true;
+                    action.complete(true);
+                } else if (action.getType().equals(mServiceActions.STOP_SERVICE)) {
+                    SystemEventsHandler.onInfo("STOP_COMMUNICATION_SERVICE");
+                    break;
                 }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+    }
+}
 
-//        try(ServerSocket serverSocket = new ServerSocket(9991)) {
-//            Socket connectionSocket = serverSocket.accept();
+
+//package com.touristskaya.homeoseq.server.services.communication_service;
 //
-//            InputStream inputToServer = connectionSocket.getInputStream();
+//import com.google.gson.Gson;
+//import com.touristskaya.homeoseq.common.TestObject;
+//import com.touristskaya.homeoseq.common.actions.ActionsDispatcher;
+//import com.touristskaya.homeoseq.common.service.ActionsBuffer;
+//import com.touristskaya.homeoseq.common.service.Service;
+//import com.touristskaya.homeoseq.common.service.ServiceActions;
+//import com.touristskaya.homeoseq.common.system_events_handler.SystemEventsHandler;
+//import com.touristskaya.homeoseq.server.system_actions.dispatcher.SystemActionsDispatcher;
+//
+//import java.io.*;
+//import java.net.ServerSocket;
+//import java.net.Socket;
+//import java.util.Scanner;
+//
+//public class CommunicationService extends Thread implements Service {
+//    private ActionsDispatcher mActionsDispatcher;
+//    private CommunicationServiceActions mServiceActions;
+//    private ActionsBuffer mActionsBuffer;
+//    private ServerSocket mServerSocket;
+//    private Socket mSocket;
+//
+//    public CommunicationService(ActionsDispatcher actionsDispatcher) {
+//        mActionsDispatcher = actionsDispatcher;
+//        mServiceActions = new CommunicationServiceActions();
+//        mActionsBuffer = new ActionsBuffer(mActionsDispatcher,
+//                SystemActionsDispatcher.NEW_ACTION_EVENT,
+//                mServiceActions);
+//    }
+//
+//    @Override
+//    public ServiceActions getActions() {
+//        return mServiceActions;
+//    }
+//
+//    @Override
+//    public void startService() {
+//        start();
+//    }
+//
+//    @Override
+//    public void stopService() {
+//        try {
+//            mServerSocket.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        SystemEventsHandler.onInfo("CommunicationService->stopService()");
+//    }
+//
+//    @Override
+//    public void run() {
+//        try {
+//            mServerSocket = new ServerSocket(9991);
+//
+//            mSocket = mServerSocket.accept();
+//
+//            InputStream inputToServer = mSocket.getInputStream();
 //            BufferedReader bufReader = new BufferedReader(new InputStreamReader(inputToServer));
 //
-//            OutputStream outputFromServer = connectionSocket.getOutputStream();
+//            OutputStream outputFromServer = mSocket.getOutputStream();
 //
 //            Scanner scanner = new Scanner(inputToServer, "UTF-8");
 //            PrintWriter serverPrintOut = new PrintWriter(new OutputStreamWriter(outputFromServer, "UTF-8"), true);
@@ -125,44 +179,80 @@ public class CommunicationService extends Thread implements Service {
 //                    done = true;
 //                }
 //            }
+//
 //        } catch (IOException e) {
-//            System.out.println("ERROR");
 //            e.printStackTrace();
 //        }
-    }
-
-    private void processReceivedData(String data) {
-//        Gson gson = new GsonBuilder()
-//                .setLenient()
-//                .create();
-
-        Gson gson = new Gson();
-
-        TestObject s = gson.fromJson(data, TestObject.class);
-
-        System.out.println(s.a + " - " + s.s);
-
-//        System.out.println("HERE: " + data);
 //
-//        int a = 11;
-//        String s = "string";
-//        List<String> list = new ArrayList<>();
-//        list.add("A");
-//        list.add("B");
-//        list.add("C");
+////        try(ServerSocket serverSocket = new ServerSocket(9991)) {
+////            Socket connectionSocket = serverSocket.accept();
+////
+////            InputStream inputToServer = connectionSocket.getInputStream();
+////            BufferedReader bufReader = new BufferedReader(new InputStreamReader(inputToServer));
+////
+////            OutputStream outputFromServer = connectionSocket.getOutputStream();
+////
+////            Scanner scanner = new Scanner(inputToServer, "UTF-8");
+////            PrintWriter serverPrintOut = new PrintWriter(new OutputStreamWriter(outputFromServer, "UTF-8"), true);
+////
+////            serverPrintOut.println("Hello World! Enter Peace to exit.");
+////
+////            //Have the server take input from the client and echo it back
+////            //This should be placed in a loop that listens for a terminator text e.g. bye
+////            boolean done = false;
+////
+////            while(!done && scanner.hasNextLine()) {
+////                String line = scanner.nextLine();
+////
+////                processReceivedData(line);
+////
+//////                System.out.println(line);
+////
+//////                serverPrintOut.println("Echo from <Your Name Here> Server: " + line);
+////
+////                if(line.toLowerCase().trim().equals("peace")) {
+////                    System.out.println("DONE");
+////                    done = true;
+////                }
+////            }
+////        } catch (IOException e) {
+////            System.out.println("ERROR");
+////            e.printStackTrace();
+////        }
+//    }
 //
-//        TestObject t = new TestObject(a, s, list);
+//    private void processReceivedData(String data) {
+////        Gson gson = new GsonBuilder()
+////                .setLenient()
+////                .create();
 //
-//        Gson g1 = new Gson();
-//        String serialized = g1.toJson(t);
+//        Gson gson = new Gson();
 //
-//        System.out.println(serialized);
+//        TestObject s = gson.fromJson(data, TestObject.class);
 //
-//        Gson g2 = new Gson();
-//        TestObject to = g2.fromJson(serialized, TestObject.class);
+//        System.out.println(s.a + " - " + s.s);
 //
-//        System.out.println("DESER: " + to.a);
-
-//        Action a = new Action()
-    }
-}
+////        System.out.println("HERE: " + data);
+////
+////        int a = 11;
+////        String s = "string";
+////        List<String> list = new ArrayList<>();
+////        list.add("A");
+////        list.add("B");
+////        list.add("C");
+////
+////        TestObject t = new TestObject(a, s, list);
+////
+////        Gson g1 = new Gson();
+////        String serialized = g1.toJson(t);
+////
+////        System.out.println(serialized);
+////
+////        Gson g2 = new Gson();
+////        TestObject to = g2.fromJson(serialized, TestObject.class);
+////
+////        System.out.println("DESER: " + to.a);
+//
+////        Action a = new Action()
+//    }
+//}

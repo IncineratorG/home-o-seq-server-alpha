@@ -9,7 +9,6 @@ import com.touristskaya.homeoseq.server.system_actions.actions.SystemActions;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -42,7 +41,17 @@ public class MainViewController<T> implements Initializable {
         rightButton.setOnAction((e) -> {
             SystemEventsHandler.onInfo("RIGHT_BUTTON_CLICK");
 
-            Promise<String> p = new Promise<>();
+            Promise<Boolean> promise = new Promise<>();
+            promise.then(result -> {
+                SystemEventsHandler.onInfo("DATA_SEND_PROMISE: " + result);
+            });
+
+            ActionsDispatcher dispatcher = Server.get().getDispatcher();
+            dispatcher.dispatch(
+                    SystemActions.communicationServiceActions.sendTestDataAction("TEST_DATA", promise)
+            );
+
+//            Promise<String> p = new Promise<>();
 
 
 //            Promise<String> promise = new Promise<>();

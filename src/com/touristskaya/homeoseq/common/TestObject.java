@@ -1,4 +1,4 @@
-package com.touristskaya.homeoseq.server.services.communication_service;
+package com.touristskaya.homeoseq.common;
 
 import java.util.List;
 

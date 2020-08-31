@@ -9,5 +9,5 @@ public class SystemActions {
     public static final ServerActions serverActions = new ServerActions();
     public static final TestServiceActions testServiceActions = new TestServiceActions();
     public static final AnotherTestServiceActions anotherTestServiceActions = new AnotherTestServiceActions();
-    public static final CommunicationServiceActions requestServiceActions = new CommunicationServiceActions();
+    public static final CommunicationServiceActions communicationServiceActions = new CommunicationServiceActions();
 }
