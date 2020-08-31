@@ -1,7 +1,6 @@
-package com.touristskaya.homeoseq.server.common.notifier.subscription;
+package com.touristskaya.homeoseq.common.notifier.subscription;
 
-import com.touristskaya.homeoseq.server.common.notifier.events.Event;
-import com.touristskaya.homeoseq.server.common.notifier.events.EventHandler;
+import com.touristskaya.homeoseq.common.notifier.events.EventHandler;
 
 public class Subscription {
     private int mId;

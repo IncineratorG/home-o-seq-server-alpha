@@ -1,10 +1,11 @@
 package com.touristskaya.homeoseq.server;
 
-import com.touristskaya.homeoseq.server.common.actions.ActionsDispatcher;
-import com.touristskaya.homeoseq.server.common.actions.action.Action;
-import com.touristskaya.homeoseq.server.common.notifier.Notifier;
+import com.touristskaya.homeoseq.common.actions.ActionsDispatcher;
+import com.touristskaya.homeoseq.common.actions.action.Action;
+import com.touristskaya.homeoseq.common.notifier.Notifier;
+import com.touristskaya.homeoseq.common.system_events_handler.SystemEventsHandler;
 import com.touristskaya.homeoseq.server.services.another_test_service.AnotherTestService;
-import com.touristskaya.homeoseq.server.services.request_service.RequestService;
+import com.touristskaya.homeoseq.server.services.communication_service.CommunicationService;
 import com.touristskaya.homeoseq.server.services.test_service.TestService;
 import com.touristskaya.homeoseq.server.system_actions.actions.SystemActions;
 import com.touristskaya.homeoseq.server.system_actions.dispatcher.SystemActionsDispatcher;
@@ -12,16 +13,27 @@ import com.touristskaya.homeoseq.server.system_actions.dispatcher.SystemActionsD
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class Server extends Thread {
+    private static Server mInstance;
+
     private LinkedBlockingQueue<String> q = new LinkedBlockingQueue<>();
 
     private Notifier mNotifier;
     private ActionsDispatcher mActionsDispatcher;
 
-    private RequestService mRequestService;
+    private CommunicationService mCommunicationService;
     private TestService mTestService;
     private AnotherTestService mAnotherTestService;
 
-    public Server() {
+    public static synchronized Server get() {
+        if (mInstance != null) {
+            return mInstance;
+        }
+
+        mInstance = new Server();
+        return mInstance;
+    }
+
+    private Server() {
         mNotifier = new Notifier();
 
         mActionsDispatcher = new SystemActionsDispatcher();
@@ -39,30 +51,44 @@ public class Server extends Thread {
             }
         }));
 
-        mRequestService = new RequestService(mActionsDispatcher);
+        mCommunicationService = new CommunicationService(mActionsDispatcher);
         mTestService = new TestService(mActionsDispatcher);
         mAnotherTestService = new AnotherTestService(mActionsDispatcher);
     }
 
+    public ActionsDispatcher getDispatcher() {
+        return mActionsDispatcher;
+    }
+
     @Override
     public void run() {
-        System.out.println("SERVER_IS_RUNNING");
+        SystemEventsHandler.onInfo("SERVER_IS_RUNNING");
 
-        mRequestService.startService();
+        mCommunicationService.startService();
         mTestService.startService();
         mAnotherTestService.startService();
 
         while (true) {
             try {
                 String s = q.take();
-                System.out.println("TAKEN: " + s);
+                SystemEventsHandler.onInfo("TAKEN: " + s);
 
                 if (s.equals("STOP")) {
-                    System.out.println("STOPPING_SERVER");
+                    SystemEventsHandler.onInfo("STOPPING_SERVER");
+
+                    mTestService.stopService();
+                    mTestService.join();
+
+                    mAnotherTestService.stopService();
+                    mAnotherTestService.join();
+
+                    mCommunicationService.stopService();
+                    mCommunicationService.join();
+
                     break;
                 }
             } catch (InterruptedException e) {
-                System.out.println("INTERRUPTED");
+                SystemEventsHandler.onInfo("INTERRUPTED");
                 e.printStackTrace();
             }
         }

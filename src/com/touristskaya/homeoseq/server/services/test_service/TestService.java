@@ -1,14 +1,20 @@
 package com.touristskaya.homeoseq.server.services.test_service;
 
-import com.touristskaya.homeoseq.server.common.actions.ActionsDispatcher;
-import com.touristskaya.homeoseq.server.common.actions.action.Action;
-import com.touristskaya.homeoseq.server.common.service.ActionsBuffer;
-import com.touristskaya.homeoseq.server.common.service.Service;
-import com.touristskaya.homeoseq.server.common.service.ServiceActions;
-import com.touristskaya.homeoseq.server.system_actions.actions.SystemActions;
+import com.touristskaya.homeoseq.common.actions.ActionsDispatcher;
+import com.touristskaya.homeoseq.common.actions.action.Action;
+import com.touristskaya.homeoseq.common.payload.Payload;
+import com.touristskaya.homeoseq.common.promise.Promise;
+import com.touristskaya.homeoseq.common.service.ActionsBuffer;
+import com.touristskaya.homeoseq.common.service.Service;
+import com.touristskaya.homeoseq.common.service.ServiceActions;
+import com.touristskaya.homeoseq.common.system_events_handler.SystemEventsHandler;
 import com.touristskaya.homeoseq.server.system_actions.dispatcher.SystemActionsDispatcher;
 
-public class TestService implements Service {
+import java.util.concurrent.LinkedBlockingQueue;
+
+public class TestService extends Thread implements Service {
+    private LinkedBlockingQueue<Action> mActionsQueue = new LinkedBlockingQueue<>();
+
     private ActionsDispatcher mActionsDispatcher;
     private TestServiceActions mServiceActions;
     private ActionsBuffer mActionsBuffer;
@@ -22,7 +28,11 @@ public class TestService implements Service {
                 SystemActionsDispatcher.NEW_ACTION_EVENT,
                 mServiceActions);
         mActionsBuffer.subscribe(ActionsBuffer.NEW_ACTION_AVAILABLE_EVENT, (data) -> {
-            System.out.println("TestService->onNewActionsAvailable()");
+            try {
+                mActionsQueue.put(mActionsBuffer.takeLatest());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         });
     }
 
@@ -32,10 +42,48 @@ public class TestService implements Service {
 
     @Override
     public void startService() {
-
+        this.start();
     }
 
-//    @Override
+    @Override
+    public void stopService() {
+        SystemEventsHandler.onInfo("TestService->stopService()");
+
+        mActionsDispatcher.dispatch(mServiceActions.stopServiceAction());
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                Action action = mActionsQueue.take();
+
+                SystemEventsHandler.onInfo("TestService->takeAction(): " + action.getType());
+
+                if (action.getType().equals(mServiceActions.GET_DATA)) {
+                    SystemEventsHandler.onInfo("GET_DATA_ACTION");
+
+                    Payload payload = new Payload();
+                    payload.set("a", 2);
+                    payload.set("b", 3);
+
+                    action.complete(payload);
+
+//                    @SuppressWarnings (value="unchecked")
+//                    Promise<Payload> promise = (Promise<Payload>) action.getPayload();
+//
+//                    promise.resolve(payload);
+                } else if (action.getType().equals(mServiceActions.STOP_SERVICE)) {
+                    break;
+                }
+            } catch (InterruptedException e) {
+                SystemEventsHandler.onInfo("TestService->run(): INTERRUPTED");
+                e.printStackTrace();
+            }
+        }
+    }
+
+//        @Override
 //    public void run() {
 //        System.out.println("TestService_IS_RUNNING");
 //

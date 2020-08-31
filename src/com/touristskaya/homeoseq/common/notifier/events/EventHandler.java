@@ -1,4 +1,4 @@
-package com.touristskaya.homeoseq.server.common.notifier.events;
+package com.touristskaya.homeoseq.common.notifier.events;
 
 public interface EventHandler {
     void handle(Object data);

@@ -1,30 +1,31 @@
-package com.touristskaya.homeoseq.server.services.request_service;
+package com.touristskaya.homeoseq.server.services.communication_service;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.touristskaya.homeoseq.server.common.actions.ActionsDispatcher;
-import com.touristskaya.homeoseq.server.common.actions.action.Action;
-import com.touristskaya.homeoseq.server.common.service.ActionsBuffer;
-import com.touristskaya.homeoseq.server.common.service.Service;
-import com.touristskaya.homeoseq.server.common.service.ServiceActions;
+import com.touristskaya.homeoseq.common.actions.ActionsDispatcher;
+import com.touristskaya.homeoseq.common.service.ActionsBuffer;
+import com.touristskaya.homeoseq.common.service.Service;
+import com.touristskaya.homeoseq.common.service.ServiceActions;
+import com.touristskaya.homeoseq.common.system_events_handler.SystemEventsHandler;
 import com.touristskaya.homeoseq.server.system_actions.dispatcher.SystemActionsDispatcher;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
-public class RequestService extends Thread implements Service {
+public class CommunicationService extends Thread implements Service {
     private ActionsDispatcher mActionsDispatcher;
-    private RequestServiceActions mServiceActions;
+    private CommunicationServiceActions mServiceActions;
     private ActionsBuffer mActionsBuffer;
     private ServerSocket mServerSocket;
+    private Socket mSocket;
+    private boolean mRunning;
 
-    public RequestService(ActionsDispatcher actionsDispatcher) {
+    public CommunicationService(ActionsDispatcher actionsDispatcher) {
+        mRunning = true;
+
         mActionsDispatcher = actionsDispatcher;
-        mServiceActions = new RequestServiceActions();
+        mServiceActions = new CommunicationServiceActions();
         mActionsBuffer = new ActionsBuffer(mActionsDispatcher,
                 SystemActionsDispatcher.NEW_ACTION_EVENT,
                 mServiceActions);
@@ -41,14 +42,29 @@ public class RequestService extends Thread implements Service {
     }
 
     @Override
-    public void run() {
-        try(ServerSocket serverSocket = new ServerSocket(9991)) {
-            Socket connectionSocket = serverSocket.accept();
+    public void stopService() {
+        mRunning = false;
 
-            InputStream inputToServer = connectionSocket.getInputStream();
+        try {
+            mServerSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        SystemEventsHandler.onInfo("CommunicationService->stopService()");
+    }
+
+    @Override
+    public void run() {
+        try {
+            mServerSocket = new ServerSocket(9991);
+
+            mSocket = mServerSocket.accept();
+
+            InputStream inputToServer = mSocket.getInputStream();
             BufferedReader bufReader = new BufferedReader(new InputStreamReader(inputToServer));
 
-            OutputStream outputFromServer = connectionSocket.getOutputStream();
+            OutputStream outputFromServer = mSocket.getOutputStream();
 
             Scanner scanner = new Scanner(inputToServer, "UTF-8");
             PrintWriter serverPrintOut = new PrintWriter(new OutputStreamWriter(outputFromServer, "UTF-8"), true);
@@ -73,10 +89,46 @@ public class RequestService extends Thread implements Service {
                     done = true;
                 }
             }
+
         } catch (IOException e) {
-            System.out.println("ERROR");
             e.printStackTrace();
         }
+
+//        try(ServerSocket serverSocket = new ServerSocket(9991)) {
+//            Socket connectionSocket = serverSocket.accept();
+//
+//            InputStream inputToServer = connectionSocket.getInputStream();
+//            BufferedReader bufReader = new BufferedReader(new InputStreamReader(inputToServer));
+//
+//            OutputStream outputFromServer = connectionSocket.getOutputStream();
+//
+//            Scanner scanner = new Scanner(inputToServer, "UTF-8");
+//            PrintWriter serverPrintOut = new PrintWriter(new OutputStreamWriter(outputFromServer, "UTF-8"), true);
+//
+//            serverPrintOut.println("Hello World! Enter Peace to exit.");
+//
+//            //Have the server take input from the client and echo it back
+//            //This should be placed in a loop that listens for a terminator text e.g. bye
+//            boolean done = false;
+//
+//            while(!done && scanner.hasNextLine()) {
+//                String line = scanner.nextLine();
+//
+//                processReceivedData(line);
+//
+////                System.out.println(line);
+//
+////                serverPrintOut.println("Echo from <Your Name Here> Server: " + line);
+//
+//                if(line.toLowerCase().trim().equals("peace")) {
+//                    System.out.println("DONE");
+//                    done = true;
+//                }
+//            }
+//        } catch (IOException e) {
+//            System.out.println("ERROR");
+//            e.printStackTrace();
+//        }
     }
 
     private void processReceivedData(String data) {

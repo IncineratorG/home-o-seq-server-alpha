@@ -1,8 +1,8 @@
-package com.touristskaya.homeoseq.server.common.notifier;
+package com.touristskaya.homeoseq.common.notifier;
 
-import com.touristskaya.homeoseq.server.common.notifier.events.EventHandler;
-import com.touristskaya.homeoseq.server.common.notifier.subscription.Subscription;
-import com.touristskaya.homeoseq.server.common.notifier.subscription.UnsubscribeHandler;
+import com.touristskaya.homeoseq.common.notifier.events.EventHandler;
+import com.touristskaya.homeoseq.common.notifier.subscription.Subscription;
+import com.touristskaya.homeoseq.common.notifier.subscription.UnsubscribeHandler;
 
 import java.util.ArrayList;
 import java.util.List;

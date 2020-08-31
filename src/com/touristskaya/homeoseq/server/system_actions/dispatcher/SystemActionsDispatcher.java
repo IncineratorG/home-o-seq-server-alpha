@@ -1,10 +1,10 @@
 package com.touristskaya.homeoseq.server.system_actions.dispatcher;
 
-import com.touristskaya.homeoseq.server.common.actions.ActionsDispatcher;
-import com.touristskaya.homeoseq.server.common.actions.action.Action;
-import com.touristskaya.homeoseq.server.common.notifier.Notifier;
-import com.touristskaya.homeoseq.server.common.notifier.events.EventHandler;
-import com.touristskaya.homeoseq.server.common.notifier.subscription.UnsubscribeHandler;
+import com.touristskaya.homeoseq.common.actions.ActionsDispatcher;
+import com.touristskaya.homeoseq.common.actions.action.Action;
+import com.touristskaya.homeoseq.common.notifier.Notifier;
+import com.touristskaya.homeoseq.common.notifier.events.EventHandler;
+import com.touristskaya.homeoseq.common.notifier.subscription.UnsubscribeHandler;
 
 public class SystemActionsDispatcher implements ActionsDispatcher {
     public static final String NEW_ACTION_EVENT = "SYSTEM_ACTIONS_DISPATCHER_NEW_ACTION_EVENT";

@@ -1,19 +1,30 @@
 package com.touristskaya.homeoseq.server.services.test_service;
 
-import com.touristskaya.homeoseq.server.common.actions.action.Action;
-import com.touristskaya.homeoseq.server.common.service.ServiceActions;
+import com.touristskaya.homeoseq.common.actions.action.Action;
+import com.touristskaya.homeoseq.common.payload.Payload;
+import com.touristskaya.homeoseq.common.promise.Promise;
+import com.touristskaya.homeoseq.common.service.ServiceActions;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class TestServiceActions implements ServiceActions {
-    public final String FIRST_ACTION = "FIRST_ACTION";
-    public final String SECOND_ACTION = "SECOND_ACTION";
-    public final String THIRD_ACTION = "THIRD_ACTION";
-    public final String FOURTH_ACTION = "FOURTH_ACTION";
+    public final String FIRST_ACTION = "TSA_FIRST_ACTION";
+    public final String SECOND_ACTION = "TSA_SECOND_ACTION";
+    public final String THIRD_ACTION = "TSA_THIRD_ACTION";
+    public final String FOURTH_ACTION = "TSA_FOURTH_ACTION";
+    public final String STOP_SERVICE = "TSA_STOP_SERVICE";
+    public final String GET_DATA = "TSA_GET_DATA";
 
     public List<String> getTypes() {
-        return Arrays.asList(FIRST_ACTION, SECOND_ACTION, THIRD_ACTION, FOURTH_ACTION);
+        return Arrays.asList(
+                FIRST_ACTION,
+                SECOND_ACTION,
+                THIRD_ACTION,
+                FOURTH_ACTION,
+                STOP_SERVICE,
+                GET_DATA
+        );
     }
 
     public Action firstAction() {
@@ -31,4 +42,10 @@ public class TestServiceActions implements ServiceActions {
     public Action fourthAction() {
         return new Action(FOURTH_ACTION);
     }
+
+    public Action getDataAction(Promise<Payload> promise) {
+        return new Action(GET_DATA, promise);
+    }
+
+    public Action stopServiceAction() { return new Action(STOP_SERVICE); }
 }

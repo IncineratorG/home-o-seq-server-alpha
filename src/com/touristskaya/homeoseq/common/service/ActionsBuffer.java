@@ -1,10 +1,10 @@
-package com.touristskaya.homeoseq.server.common.service;
+package com.touristskaya.homeoseq.common.service;
 
-import com.touristskaya.homeoseq.server.common.actions.action.Action;
-import com.touristskaya.homeoseq.server.common.notifier.Notifier;
-import com.touristskaya.homeoseq.server.common.notifier.events.EventHandler;
-import com.touristskaya.homeoseq.server.common.notifier.events.EventsSource;
-import com.touristskaya.homeoseq.server.common.notifier.subscription.UnsubscribeHandler;
+import com.touristskaya.homeoseq.common.actions.action.Action;
+import com.touristskaya.homeoseq.common.notifier.Notifier;
+import com.touristskaya.homeoseq.common.notifier.events.EventHandler;
+import com.touristskaya.homeoseq.common.notifier.events.EventsSource;
+import com.touristskaya.homeoseq.common.notifier.subscription.UnsubscribeHandler;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -19,7 +19,7 @@ public class ActionsBuffer implements EventsSource {
     private List<Action> mAvailableActions;
     private Notifier mNotifier;
 
-    public ActionsBuffer(EventsSource eventsSource, String newActionEvent, ServiceActions serviceActions) {
+    public ActionsBuffer(EventsSource eventsSource, String newActionEventType, ServiceActions serviceActions) {
         mNotifier = new Notifier();
 
         mAvailableActions = new CopyOnWriteArrayList<>();
@@ -28,7 +28,7 @@ public class ActionsBuffer implements EventsSource {
         mServiceActionTypes = new HashSet<>(mServiceActions.getTypes());
 
         mEventsSource = eventsSource;
-        mEventsSource.subscribe(newActionEvent, (actionData) -> {
+        mEventsSource.subscribe(newActionEventType, (actionData) -> {
             Action action = (Action) actionData;
             if (mServiceActionTypes.contains(action.getType())) {
                 saveAction(action);

@@ -1,7 +1,7 @@
 package com.touristskaya.homeoseq.server;
 
-import com.touristskaya.homeoseq.server.common.actions.action.Action;
-import com.touristskaya.homeoseq.server.common.service.ServiceActions;
+import com.touristskaya.homeoseq.common.actions.action.Action;
+import com.touristskaya.homeoseq.common.service.ServiceActions;
 
 import java.util.Arrays;
 import java.util.List;
