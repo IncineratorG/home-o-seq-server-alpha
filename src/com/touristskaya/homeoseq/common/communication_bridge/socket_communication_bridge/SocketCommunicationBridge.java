@@ -26,6 +26,7 @@ public class SocketCommunicationBridge extends Thread implements CommunicationBr
     @Override
     public void close() {
         try {
+            SystemEventsHandler.onInfo("SocketCommunicationBridget->close()");
             mServerSocket.close();
         } catch (IOException e) {
             e.printStackTrace();

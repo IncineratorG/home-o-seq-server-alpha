@@ -15,6 +15,7 @@ public class TestServiceActions implements ServiceActions {
     public final String FOURTH_ACTION = "TSA_FOURTH_ACTION";
     public final String STOP_SERVICE = "TSA_STOP_SERVICE";
     public final String GET_DATA = "TSA_GET_DATA";
+    public final String RUN_LONG_RUNNING_TASK = "TSA_RUN_LONG_RUNNING_TASK";
 
     public List<String> getTypes() {
         return Arrays.asList(
@@ -23,7 +24,8 @@ public class TestServiceActions implements ServiceActions {
                 THIRD_ACTION,
                 FOURTH_ACTION,
                 STOP_SERVICE,
-                GET_DATA
+                GET_DATA,
+                RUN_LONG_RUNNING_TASK
         );
     }
 
@@ -45,6 +47,10 @@ public class TestServiceActions implements ServiceActions {
 
     public Action getDataAction(Promise<Payload> promise) {
         return new Action(GET_DATA, promise);
+    }
+
+    public Action runLongRunningTaskAction() {
+        return new Action(RUN_LONG_RUNNING_TASK);
     }
 
     public Action stopServiceAction() { return new Action(STOP_SERVICE); }

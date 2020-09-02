@@ -60,7 +60,9 @@ public class TestService extends Thread implements Service {
 
                 SystemEventsHandler.onInfo("TestService->takeAction(): " + action.getType());
 
-                if (action.getType().equals(mServiceActions.GET_DATA)) {
+                if (action.getType().equals(mServiceActions.STOP_SERVICE)) {
+                    break;
+                } else if (action.getType().equals(mServiceActions.GET_DATA)) {
                     SystemEventsHandler.onInfo("GET_DATA_ACTION");
 
                     Payload payload = new Payload();
@@ -73,8 +75,12 @@ public class TestService extends Thread implements Service {
 //                    Promise<Payload> promise = (Promise<Payload>) action.getPayload();
 //
 //                    promise.resolve(payload);
-                } else if (action.getType().equals(mServiceActions.STOP_SERVICE)) {
-                    break;
+                } else if (action.getType().equals(mServiceActions.RUN_LONG_RUNNING_TASK)) {
+                    SystemEventsHandler.onInfo("TestService->RUN_LONG_RUNNING_TASK");
+
+                    Thread.sleep(1000);
+
+                    SystemEventsHandler.onInfo("TestService->RUN_LONG_RUNNING_TASK->FINISHED");
                 }
             } catch (InterruptedException e) {
                 SystemEventsHandler.onInfo("TestService->run(): INTERRUPTED");
