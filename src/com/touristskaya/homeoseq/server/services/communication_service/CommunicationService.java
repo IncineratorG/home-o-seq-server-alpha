@@ -2,12 +2,13 @@ package com.touristskaya.homeoseq.server.services.communication_service;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.touristskaya.homeoseq.common.Message;
+import com.touristskaya.homeoseq.common.client_requests.ClientRequest;
 import com.touristskaya.homeoseq.common.actions.ActionsDispatcher;
 import com.touristskaya.homeoseq.common.actions.action.Action;
-import com.touristskaya.homeoseq.common.communication_bridge.CommunicationBridge;
+import com.touristskaya.homeoseq.common.client_requests.ClientRequestTypes;
 import com.touristskaya.homeoseq.common.communication_bridge.socket_communication_bridge.SocketCommunicationBridge;
-import com.touristskaya.homeoseq.common.payload.Payload;
+import com.touristskaya.homeoseq.common.communication_manager.CommunicationManager;
+import com.touristskaya.homeoseq.common.communication_messages.CommunicationMessages;
 import com.touristskaya.homeoseq.common.promise.Promise;
 import com.touristskaya.homeoseq.common.service.ActionsBuffer;
 import com.touristskaya.homeoseq.common.service.Service;
@@ -24,7 +25,7 @@ public class CommunicationService extends Thread implements Service {
     private ActionsDispatcher mActionsDispatcher;
     private CommunicationServiceActions mServiceActions;
     private ActionsBuffer mActionsBuffer;
-    private CommunicationBridge mSocketCommunicationBridge;
+    private CommunicationManager mCommunicationManager;
 
     public CommunicationService(ActionsDispatcher actionsDispatcher) {
         mActionsDispatcher = actionsDispatcher;
@@ -40,68 +41,24 @@ public class CommunicationService extends Thread implements Service {
             }
         });
 
-        mSocketCommunicationBridge = new SocketCommunicationBridge();
-        mSocketCommunicationBridge.onReceived(this::parseMessageData);
+        mCommunicationManager = new CommunicationManager(new SocketCommunicationBridge());
+        mCommunicationManager.onRequestReceived(this::processRequest);
     }
 
-    // ===
-    // =====
-    private void parseMessageData(String data) {
-        SystemEventsHandler.onInfo("PARSED_RECEIVED: " + data);
+    private void processRequest(ClientRequest request) {
+        switch (request.getType()) {
+            case (ClientRequestTypes.RUN_LONG_RUNNING_TASK): {
+                mCommunicationManager.sendMessage(
+                        CommunicationMessages.confirmReceiveRequestMessage(request.getUuid())
+                );
 
-        Gson gson = new Gson();
-
-        try {
-            Message message = gson.fromJson(data, Message.class);
-            SystemEventsHandler.onInfo("PARSED: " + message.getType());
-
-            switch (message.getType()) {
-                case "GET_DATA": {
-                    Promise<Payload> promise = new Promise<>();
-                    promise.then(payload -> {
-                        int a = (int) payload.get("a");
-                        int b = (int) payload.get("b");
-
-                        SystemEventsHandler.onInfo("RESULT: " + a + " - " + b);
-
-                        Message responseMessage = new Message("RESPONSE");
-                        responseMessage.setValue("a", String.valueOf(a));
-                        responseMessage.setValue("b", String.valueOf(b));
-
-                        mSocketCommunicationBridge.send(gson.toJson(responseMessage));
-
-//                        Message testMessage = new Message("TEST_MESS");
-//                        testMessage.setValue("A", "a");
-//                        testMessage.setValue("B", "b");
-//
-//                        String testMessageJson = gson.toJson(testMessage);
-//                        SystemEventsHandler.onInfo(testMessageJson);
-//
-//                        testMessage = gson.fromJson(testMessageJson, Message.class);
-//                        SystemEventsHandler.onInfo(testMessage.getValue("A"));
-//                        SystemEventsHandler.onInfo(testMessage.getValue("B"));
-                    });
-
-                    mActionsDispatcher.dispatch(SystemActions.testServiceActions.getDataAction(promise));
-                    break;
-                }
-
-                case "RUN_LONG_RUNNING_TASK": {
-                    mActionsDispatcher.dispatch(SystemActions.testServiceActions.runLongRunningTaskAction());
-                    break;
-                }
-
-                case "STOP_SERVER": {
-                    mActionsDispatcher.dispatch(SystemActions.serverActions.stopServerAction());
-                    break;
-                }
+                mActionsDispatcher.dispatch(
+                        SystemActions.testServiceActions.runLongRunningTaskAction(new Promise<>())
+                );
+                break;
             }
-        } catch (JsonSyntaxException e) {
-            SystemEventsHandler.onError("JsonSyntaxException");
         }
     }
-    // =====
-    // ===
 
     @Override
     public ServiceActions getActions() {
@@ -116,37 +73,120 @@ public class CommunicationService extends Thread implements Service {
     @Override
     public void stopService() {
         SystemEventsHandler.onInfo("CommunicationService->stopService()");
-        mSocketCommunicationBridge.close();
+        mCommunicationManager.stop();
 
         mActionsDispatcher.dispatch(mServiceActions.stopServiceAction());
     }
 
     @Override
     public void run() {
-        mSocketCommunicationBridge.open();
+        mCommunicationManager.start();
 
-        while (true) {
-            try {
-                Action action = mActionsQueue.take();
-
-                if (action.getType().equals(mServiceActions.SEND_TEST_DATA)) {
-                    String data = (String) action.getPayload();
-
-                    SystemEventsHandler.onInfo("SEND_TEST_DATA: " + data);
-
-                    mSocketCommunicationBridge.send(data);
-
-                    action.complete(true);
-                } else if (action.getType().equals(mServiceActions.STOP_SERVICE)) {
-                    SystemEventsHandler.onInfo("STOP_COMMUNICATION_SERVICE");
-                    break;
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+//        while (true) {
+//            try {
+//                Action action = mActionsQueue.take();
+//
+//                if (action.getType().equals(mServiceActions.SEND_TEST_DATA)) {
+//                    String data = (String) action.getPayload();
+//
+//                    SystemEventsHandler.onInfo("SEND_TEST_DATA: " + data);
+//
+//                    mSocketCommunicationBridge.send(data);
+//
+//                    action.complete(true);
+//                } else if (action.getType().equals(mServiceActions.STOP_SERVICE)) {
+//                    SystemEventsHandler.onInfo("STOP_COMMUNICATION_SERVICE");
+//                    break;
+//                }
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 }
+
+// ===
+// =====
+//    private void parseMessageData(String data) {
+//        SystemEventsHandler.onInfo("PARSED_RECEIVED: " + data);
+//
+//        Gson gson = new Gson();
+//
+//        try {
+//            ClientRequest request = gson.fromJson(data, ClientRequest.class);
+//            SystemEventsHandler.onInfo("PARSED: " + request.getType() + " - " + request.getUuid());
+//            SystemEventsHandler.onInfo("A: " + request.getPayloadItem("a"));
+//            SystemEventsHandler.onInfo("B: " + request.getPayloadItem("b"));
+//            SystemEventsHandler.onInfo("LIST: " + request.getPayloadItem("list"));
+//
+//            switch (request.getType()) {
+//                case "RUN_LONG_RUNNING_TASK": {
+//                    mCommunicationManager.sendMessage(
+//                            CommunicationMessages.confirmReceiveRequestMessage(request.getUuid())
+//                    );
+//
+//                    mActionsDispatcher.dispatch(
+//                            SystemActions.testServiceActions.runLongRunningTaskAction(new Promise<>())
+//                    );
+//                    break;
+//                }
+//            }
+//
+//        } catch (JsonSyntaxException e) {
+//            SystemEventsHandler.onError("JsonSyntaxException: " + e.toString());
+//        }
+//
+////        try {
+////            ServerMessage message = gson.fromJson(data, ServerMessage.class);
+////            SystemEventsHandler.onInfo("PARSED: " + message.getType());
+////
+////            switch (message.getType()) {
+////                case "GET_DATA": {
+////                    Promise<Payload> promise = new Promise<>();
+////                    promise.then(payload -> {
+////                        int a = (int) payload.get("a");
+////                        int b = (int) payload.get("b");
+////
+////                        SystemEventsHandler.onInfo("RESULT: " + a + " - " + b);
+////
+////                        ServerMessage responseMessage = new ServerMessage("RESPONSE");
+////                        responseMessage.setValue("a", String.valueOf(a));
+////                        responseMessage.setValue("b", String.valueOf(b));
+////
+////                        mSocketCommunicationBridge.send(gson.toJson(responseMessage));
+////
+//////                        ServerMessage testMessage = new ServerMessage("TEST_MESS");
+//////                        testMessage.setValue("A", "a");
+//////                        testMessage.setValue("B", "b");
+//////
+//////                        String testMessageJson = gson.toJson(testMessage);
+//////                        SystemEventsHandler.onInfo(testMessageJson);
+//////
+//////                        testMessage = gson.fromJson(testMessageJson, ServerMessage.class);
+//////                        SystemEventsHandler.onInfo(testMessage.getValue("A"));
+//////                        SystemEventsHandler.onInfo(testMessage.getValue("B"));
+////                    });
+////
+////                    mActionsDispatcher.dispatch(SystemActions.testServiceActions.getDataAction(promise));
+////                    break;
+////                }
+////
+////                case "RUN_LONG_RUNNING_TASK": {
+////                    mActionsDispatcher.dispatch(SystemActions.testServiceActions.runLongRunningTaskAction());
+////                    break;
+////                }
+////
+////                case "STOP_SERVER": {
+////                    mActionsDispatcher.dispatch(SystemActions.serverActions.stopServerAction());
+////                    break;
+////                }
+////            }
+////        } catch (JsonSyntaxException e) {
+////            SystemEventsHandler.onError("JsonSyntaxException");
+////        }
+//    }
+// =====
+// ===
 
 
 //package com.touristskaya.homeoseq.server.services.communication_service;

@@ -80,6 +80,8 @@ public class TestService extends Thread implements Service {
 
                     Thread.sleep(1000);
 
+                    action.complete(new Object());
+
                     SystemEventsHandler.onInfo("TestService->RUN_LONG_RUNNING_TASK->FINISHED");
                 }
             } catch (InterruptedException e) {

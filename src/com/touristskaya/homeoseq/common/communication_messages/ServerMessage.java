@@ -1,15 +1,22 @@
-package com.touristskaya.homeoseq.common;
+package com.touristskaya.homeoseq.common.communication_messages;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class Message {
+public class ServerMessage {
     private String type;
+    private String requestUuid;
     private Map<String, String> values;
 
-    public Message(String type) {
+    public ServerMessage(String type) {
         this.type = type;
-        values = new HashMap<>();
+        this.values = new HashMap<>();
+    }
+
+    public ServerMessage(String type, String requestUuid) {
+        this.type = type;
+        this.requestUuid = requestUuid;
+        this.values = new HashMap<>();
     }
 
     public String getType() {

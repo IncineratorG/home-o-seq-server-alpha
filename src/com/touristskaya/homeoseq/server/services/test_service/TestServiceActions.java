@@ -49,8 +49,8 @@ public class TestServiceActions implements ServiceActions {
         return new Action(GET_DATA, promise);
     }
 
-    public Action runLongRunningTaskAction() {
-        return new Action(RUN_LONG_RUNNING_TASK);
+    public Action runLongRunningTaskAction(Promise<Object> completionPromise) {
+        return new Action(RUN_LONG_RUNNING_TASK, completionPromise);
     }
 
     public Action stopServiceAction() { return new Action(STOP_SERVICE); }
