@@ -1,15 +1,15 @@
-package com.touristskaya.homeoseq.common.request_parser.socket_request_parser;
+package com.touristskaya.homeoseq.common.client_request_parser.socket_client_request_parser;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.touristskaya.homeoseq.common.client_requests.ClientRequest;
-import com.touristskaya.homeoseq.common.request_parser.RequestParser;
+import com.touristskaya.homeoseq.common.client_request_parser.ClientRequestParser;
 import com.touristskaya.homeoseq.common.system_events_handler.SystemEventsHandler;
 
-public class SocketRequestParser implements RequestParser {
+public class SocketClientRequestParser implements ClientRequestParser {
     private Gson mGson;
 
-    public SocketRequestParser() {
+    public SocketClientRequestParser() {
         mGson = new Gson();
     }
 
@@ -21,7 +21,7 @@ public class SocketRequestParser implements RequestParser {
             request = mGson.fromJson(data, ClientRequest.class);
             return request;
         } catch (JsonSyntaxException e) {
-            SystemEventsHandler.onError("SocketRequestParser->parse()->ERROR: " + e.toString());
+            SystemEventsHandler.onError("SocketClientRequestParser->parse()->ERROR: " + e.toString());
             return new ClientRequest();
         }
     }

@@ -6,9 +6,11 @@ import com.touristskaya.homeoseq.common.client_requests.ClientRequest;
 import com.touristskaya.homeoseq.common.actions.ActionsDispatcher;
 import com.touristskaya.homeoseq.common.actions.action.Action;
 import com.touristskaya.homeoseq.common.client_requests.ClientRequestTypes;
+import com.touristskaya.homeoseq.common.communication_bridge.firebase_communication_bridge.FirebaseCommunicationBridge;
 import com.touristskaya.homeoseq.common.communication_bridge.socket_communication_bridge.SocketCommunicationBridge;
 import com.touristskaya.homeoseq.common.communication_manager.CommunicationManager;
 import com.touristskaya.homeoseq.common.communication_messages.CommunicationMessages;
+import com.touristskaya.homeoseq.common.communication_messages.ServerMessage;
 import com.touristskaya.homeoseq.common.promise.Promise;
 import com.touristskaya.homeoseq.common.service.ActionsBuffer;
 import com.touristskaya.homeoseq.common.service.Service;
@@ -41,7 +43,7 @@ public class CommunicationService extends Thread implements Service {
             }
         });
 
-        mCommunicationManager = new CommunicationManager(new SocketCommunicationBridge());
+        mCommunicationManager = new CommunicationManager(new FirebaseCommunicationBridge());
         mCommunicationManager.onRequestReceived(this::processRequest);
     }
 
@@ -82,26 +84,26 @@ public class CommunicationService extends Thread implements Service {
     public void run() {
         mCommunicationManager.start();
 
-//        while (true) {
-//            try {
-//                Action action = mActionsQueue.take();
-//
-//                if (action.getType().equals(mServiceActions.SEND_TEST_DATA)) {
-//                    String data = (String) action.getPayload();
-//
-//                    SystemEventsHandler.onInfo("SEND_TEST_DATA: " + data);
-//
-//                    mSocketCommunicationBridge.send(data);
-//
-//                    action.complete(true);
-//                } else if (action.getType().equals(mServiceActions.STOP_SERVICE)) {
-//                    SystemEventsHandler.onInfo("STOP_COMMUNICATION_SERVICE");
-//                    break;
-//                }
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }
+        while (true) {
+            try {
+                Action action = mActionsQueue.take();
+
+                if (action.getType().equals(mServiceActions.SEND_TEST_DATA)) {
+                    String data = (String) action.getPayload();
+
+                    SystemEventsHandler.onInfo("SEND_TEST_DATA: " + data);
+
+                    mCommunicationManager.sendMessage(new ServerMessage("TEST_TYPE"));
+
+                    action.complete(true);
+                } else if (action.getType().equals(mServiceActions.STOP_SERVICE)) {
+                    SystemEventsHandler.onInfo("STOP_COMMUNICATION_SERVICE");
+                    break;
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
 

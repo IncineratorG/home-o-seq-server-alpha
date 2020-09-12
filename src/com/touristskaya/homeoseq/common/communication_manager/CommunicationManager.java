@@ -4,8 +4,8 @@ import com.touristskaya.homeoseq.common.communication_messages.ServerMessage;
 import com.touristskaya.homeoseq.common.client_requests.ClientRequest;
 import com.touristskaya.homeoseq.common.communication_bridge.CommunicationBridge;
 import com.touristskaya.homeoseq.common.message_serializer.MessageSerializer;
-import com.touristskaya.homeoseq.common.request_parser.RequestParser;
-import com.touristskaya.homeoseq.common.request_parser.socket_request_parser.SocketRequestParser;
+import com.touristskaya.homeoseq.common.client_request_parser.ClientRequestParser;
+import com.touristskaya.homeoseq.common.client_request_parser.socket_client_request_parser.SocketClientRequestParser;
 import com.touristskaya.homeoseq.common.system_events_handler.SystemEventsHandler;
 
 import java.util.Map;
@@ -16,7 +16,7 @@ public class CommunicationManager {
     private int mIdsCounter;
     private Map<String, Consumer<ClientRequest>> mRequestConsumers;
     private CommunicationBridge mCommunicationBridge;
-    private RequestParser mSocketRequestParser;
+    private ClientRequestParser mSocketRequestParser;
     private MessageSerializer mMessageSerializer;
 
     public CommunicationManager(CommunicationBridge communicationBridge) {
@@ -24,7 +24,7 @@ public class CommunicationManager {
 
         mRequestConsumers = new ConcurrentHashMap<>();
 
-        mSocketRequestParser = new SocketRequestParser();
+        mSocketRequestParser = new SocketClientRequestParser();
 
         mMessageSerializer = new MessageSerializer();
 
