@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 public interface CommunicationBridge {
     void open();
     void close();
-    void send(String data);
+    void sendResponse(String data);
+    void sendNotification(String data);
     void onReceived(Consumer<String> dataConsumer);
 }

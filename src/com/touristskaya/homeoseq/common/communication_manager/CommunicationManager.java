@@ -47,9 +47,13 @@ public class CommunicationManager {
         mCommunicationBridge.close();
     }
 
-    public void sendMessage(ServerMessage message) {
-        SystemEventsHandler.onInfo("CommunicationManager->sendMessage()");
-        mCommunicationBridge.send(mMessageSerializer.serialize(message));
+    public void sendResponseMessage(ServerMessage message) {
+        SystemEventsHandler.onInfo("CommunicationManager->sendResponseMessage()");
+        mCommunicationBridge.sendResponse(mMessageSerializer.serialize(message));
+    }
+
+    public void sendNotificationMessage(ServerMessage message) {
+        SystemEventsHandler.onInfo("CommunicationManager->sendNotificationMessage()");
     }
 
     public String onRequestReceived(Consumer<ClientRequest> requestConsumer) {

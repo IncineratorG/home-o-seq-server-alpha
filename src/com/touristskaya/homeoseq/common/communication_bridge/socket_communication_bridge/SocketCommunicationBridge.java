@@ -34,14 +34,19 @@ public class SocketCommunicationBridge extends Thread implements CommunicationBr
     }
 
     @Override
-    public void send(String data) {
+    public void sendResponse(String data) {
         SystemEventsHandler.onInfo("SocketCommunicationBridge: " + data);
 
         if (mPrintWriter != null) {
             mPrintWriter.println(data);
         } else {
-            SystemEventsHandler.onError("SocketCommunicationBridge->send(): PRINT_WRITER_IS_NULL");
+            SystemEventsHandler.onError("SocketCommunicationBridge->sendResponse(): PRINT_WRITER_IS_NULL");
         }
+    }
+
+    @Override
+    public void sendNotification(String data) {
+        SystemEventsHandler.onInfo("SocketCommunicationBridge->sendNotification()");
     }
 
     @Override

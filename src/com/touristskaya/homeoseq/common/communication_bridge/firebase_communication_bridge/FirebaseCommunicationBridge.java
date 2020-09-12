@@ -16,6 +16,7 @@ public class FirebaseCommunicationBridge extends Thread implements Communication
             "https://surveillance-136a9.firebaseio.com/homeoseq";
     private static String mClientRequestsField = "/client/requests";
     private static String mServerResponsesField = "/server/responses";
+    private static String mServerNotificationsField = "/server/notifications";
     private Firebase mFirebaseDatabase;
     private ValueEventListener mTestEventListener;
 
@@ -68,27 +69,32 @@ public class FirebaseCommunicationBridge extends Thread implements Communication
     public void open() {
         start();
         mFirebaseDatabase.child(mClientRequestsField).addValueEventListener(mTestEventListener);
-//        mFirebaseDatabase.addValueEventListener(mTestEventListener);
     }
 
     @Override
     public void close() {
-//        mFirebaseDatabase.removeEventListener(mTestEventListener);
         mFirebaseDatabase.child(mClientRequestsField).removeEventListener(mTestEventListener);
         Firebase.goOffline();
     }
 
     @Override
-    public void send(String data) {
-        SystemEventsHandler.onInfo("FirebaseCommunicationBridge->send()");
+    public void sendResponse(String data) {
+        SystemEventsHandler.onInfo("FirebaseCommunicationBridge->sendResponse()");
 
+        String responseKey = mFirebaseDatabase.child(mServerResponsesField).push().getKey();
 
+        mFirebaseDatabase.child(mServerResponsesField).child(responseKey).setValue(data);
 
 //        String testData = "this_is_test_data";
 //
 //        String newListItemLey = mFirebaseDatabase.child(mClientRequestsField).push().getKey();
 //
 //        mFirebaseDatabase.child(mClientRequestsField).child(newListItemLey).setValue(testData);
+    }
+
+    @Override
+    public void sendNotification(String data) {
+        SystemEventsHandler.onInfo("FirebaseCommunicationBridge->sendNotification()");
     }
 
     @Override

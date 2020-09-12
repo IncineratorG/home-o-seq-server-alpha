@@ -1,13 +1,10 @@
 package com.touristskaya.homeoseq.server.services.communication_service;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import com.touristskaya.homeoseq.common.client_requests.ClientRequest;
 import com.touristskaya.homeoseq.common.actions.ActionsDispatcher;
 import com.touristskaya.homeoseq.common.actions.action.Action;
 import com.touristskaya.homeoseq.common.client_requests.ClientRequestTypes;
 import com.touristskaya.homeoseq.common.communication_bridge.firebase_communication_bridge.FirebaseCommunicationBridge;
-import com.touristskaya.homeoseq.common.communication_bridge.socket_communication_bridge.SocketCommunicationBridge;
 import com.touristskaya.homeoseq.common.communication_manager.CommunicationManager;
 import com.touristskaya.homeoseq.common.communication_messages.CommunicationMessages;
 import com.touristskaya.homeoseq.common.communication_messages.ServerMessage;
@@ -50,7 +47,7 @@ public class CommunicationService extends Thread implements Service {
     private void processRequest(ClientRequest request) {
         switch (request.getType()) {
             case (ClientRequestTypes.RUN_LONG_RUNNING_TASK): {
-                mCommunicationManager.sendMessage(
+                mCommunicationManager.sendResponseMessage(
                         CommunicationMessages.confirmReceiveRequestMessage(request.getUuid())
                 );
 
@@ -93,7 +90,7 @@ public class CommunicationService extends Thread implements Service {
 
                     SystemEventsHandler.onInfo("SEND_TEST_DATA: " + data);
 
-                    mCommunicationManager.sendMessage(new ServerMessage("TEST_TYPE"));
+                    mCommunicationManager.sendResponseMessage(new ServerMessage("TEST_TYPE"));
 
                     action.complete(true);
                 } else if (action.getType().equals(mServiceActions.STOP_SERVICE)) {
@@ -123,7 +120,7 @@ public class CommunicationService extends Thread implements Service {
 //
 //            switch (request.getType()) {
 //                case "RUN_LONG_RUNNING_TASK": {
-//                    mCommunicationManager.sendMessage(
+//                    mCommunicationManager.sendResponseMessage(
 //                            CommunicationMessages.confirmReceiveRequestMessage(request.getUuid())
 //                    );
 //
@@ -155,7 +152,7 @@ public class CommunicationService extends Thread implements Service {
 ////                        responseMessage.setValue("a", String.valueOf(a));
 ////                        responseMessage.setValue("b", String.valueOf(b));
 ////
-////                        mSocketCommunicationBridge.send(gson.toJson(responseMessage));
+////                        mSocketCommunicationBridge.sendResponse(gson.toJson(responseMessage));
 ////
 //////                        ServerMessage testMessage = new ServerMessage("TEST_MESS");
 //////                        testMessage.setValue("A", "a");
