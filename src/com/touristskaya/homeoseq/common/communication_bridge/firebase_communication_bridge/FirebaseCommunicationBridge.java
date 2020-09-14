@@ -79,7 +79,7 @@ public class FirebaseCommunicationBridge extends Thread implements Communication
 
     @Override
     public void sendResponse(String data) {
-        SystemEventsHandler.onInfo("FirebaseCommunicationBridge->sendResponse()");
+        SystemEventsHandler.onInfo("FirebaseCommunicationBridge->sendResponse(): " + data);
 
         String responseKey = mFirebaseDatabase.child(mServerResponsesField).push().getKey();
 

@@ -17,6 +17,7 @@ import java.util.ResourceBundle;
 public class MainViewController<T> implements Initializable {
     public Button leftButton;
     public Button rightButton;
+    public Button centerButton;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -24,14 +25,6 @@ public class MainViewController<T> implements Initializable {
 
         leftButton.setOnAction((e) -> {
             SystemEventsHandler.onInfo("LEFT_BUTTON_CLICK");
-
-            // ===
-//            ActionsDispatcher dispatcher = Server.get().getDispatcher();
-//
-//            dispatcher.dispatch(
-//                    SystemActions.surveillanceServiceActions.getStatusAction()
-//            );
-            // ===
 
             // ===
             ActionsDispatcher dispatcher = Server.get().getDispatcher();
@@ -45,20 +38,6 @@ public class MainViewController<T> implements Initializable {
                     SystemActions.surveillanceServiceActions.startSurveillanceAction(resultPromise)
             );
             // ===
-
-//            ActionsDispatcher dispatcher = Server.get().getDispatcher();
-//
-//            Promise<Integer> calculatePromise = new Promise<>();
-//            calculatePromise.then(result -> {
-//                SystemEventsHandler.onInfo("RESULT: " + result);
-//            });
-//
-//            Promise<Payload> promise = new Promise<>();
-//            promise.then(payload -> {
-//                dispatcher.dispatch(SystemActions.anotherTestServiceActions.calculateAction(payload, calculatePromise));
-//            });
-//
-//            dispatcher.dispatch(SystemActions.testServiceActions.getDataAction(promise));
         });
 
         rightButton.setOnAction((e) -> {
@@ -82,27 +61,19 @@ public class MainViewController<T> implements Initializable {
                     SystemActions.surveillanceServiceActions.getStatusAction(resultPromise)
             );
             // ===
+        });
 
-            // ===
-//            ActionsDispatcher dispatcher = Server.get().getDispatcher();
-//
-//            Promise<Boolean> resultPromise = new Promise<>();
-//            resultPromise.then(result -> {
-//                SystemEventsHandler.onInfo("Controller->STOP_RESULT: " + result);
-//            });
-//
-//            dispatcher.dispatch(SystemActions.surveillanceServiceActions.stopSurveillanceAction(resultPromise));
-            // ===
+        centerButton.setOnAction((e) -> {
+            ActionsDispatcher dispatcher = Server.get().getDispatcher();
 
-//            Promise<Boolean> promise = new Promise<>();
-//            promise.then(result -> {
-//                SystemEventsHandler.onInfo("DATA_SEND_PROMISE: " + result);
-//            });
-//
-//            ActionsDispatcher dispatcher = Server.get().getDispatcher();
-//            dispatcher.dispatch(
-//                    SystemActions.communicationServiceActions.sendTestDataAction("TEST_DATA", promise)
-//            );
+            Promise<Boolean> resultPromise = new Promise<>();
+            resultPromise.then(result -> {
+                SystemEventsHandler.onInfo("Controller->STOP_RESULT: " + result);
+            });
+
+            dispatcher.dispatch(
+                    SystemActions.surveillanceServiceActions.stopSurveillanceAction(resultPromise)
+            );
         });
     }
 }

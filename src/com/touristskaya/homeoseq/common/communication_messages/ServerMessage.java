@@ -6,6 +6,7 @@ import java.util.Map;
 public class ServerMessage {
     private String type;
     private String requestUuid;
+    private String stringifiedPayload;
     private Map<String, String> values;
 
     public ServerMessage(String type) {
@@ -17,6 +18,10 @@ public class ServerMessage {
         this.type = type;
         this.requestUuid = requestUuid;
         this.values = new HashMap<>();
+    }
+
+    public ServerMessage(String type, String requestUuid, String stringifiedPayload) {
+        this.stringifiedPayload = stringifiedPayload;
     }
 
     public String getType() {
