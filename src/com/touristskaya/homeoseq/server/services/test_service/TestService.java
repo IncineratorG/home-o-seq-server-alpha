@@ -3,11 +3,11 @@ package com.touristskaya.homeoseq.server.services.test_service;
 import com.touristskaya.homeoseq.common.actions.ActionsDispatcher;
 import com.touristskaya.homeoseq.common.actions.action.Action;
 import com.touristskaya.homeoseq.common.payload.Payload;
-import com.touristskaya.homeoseq.common.promise.Promise;
 import com.touristskaya.homeoseq.common.service.ActionsBuffer;
 import com.touristskaya.homeoseq.common.service.Service;
 import com.touristskaya.homeoseq.common.service.ServiceActions;
 import com.touristskaya.homeoseq.common.system_events_handler.SystemEventsHandler;
+import com.touristskaya.homeoseq.server.services.test_service.service_actions.TestServiceActions;
 import com.touristskaya.homeoseq.server.system_actions.dispatcher.SystemActionsDispatcher;
 
 import java.util.concurrent.LinkedBlockingQueue;

@@ -1,4 +1,4 @@
-package com.touristskaya.homeoseq.server.services.communication_service;
+package com.touristskaya.homeoseq.server.services.communication_service.service_actions;
 
 import com.touristskaya.homeoseq.common.actions.action.Action;
 import com.touristskaya.homeoseq.common.promise.Promise;

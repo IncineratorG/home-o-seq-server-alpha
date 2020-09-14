@@ -7,6 +7,7 @@ import com.touristskaya.homeoseq.common.service.ActionsBuffer;
 import com.touristskaya.homeoseq.common.service.Service;
 import com.touristskaya.homeoseq.common.service.ServiceActions;
 import com.touristskaya.homeoseq.common.system_events_handler.SystemEventsHandler;
+import com.touristskaya.homeoseq.server.services.another_test_service.service_actions.AnotherTestServiceActions;
 import com.touristskaya.homeoseq.server.system_actions.dispatcher.SystemActionsDispatcher;
 
 import java.util.concurrent.LinkedBlockingQueue;
@@ -21,7 +22,11 @@ public class AnotherTestService extends Thread implements Service {
     public AnotherTestService(ActionsDispatcher actionsDispatcher) {
         mActionsDispatcher = actionsDispatcher;
         mServiceActions = new AnotherTestServiceActions();
-        mActionsBuffer = new ActionsBuffer(mActionsDispatcher, SystemActionsDispatcher.NEW_ACTION_EVENT, mServiceActions);
+        mActionsBuffer = new ActionsBuffer(
+                mActionsDispatcher,
+                SystemActionsDispatcher.NEW_ACTION_EVENT,
+                mServiceActions
+        );
 
         mActionsBuffer.subscribe(ActionsBuffer.NEW_ACTION_AVAILABLE_EVENT, (data) -> {
             try {
@@ -70,7 +75,7 @@ public class AnotherTestService extends Thread implements Service {
                     break;
                 }
             } catch (InterruptedException e) {
-                SystemEventsHandler.onInfo("AnotherTestService->run(): INTERRUPTED");
+                SystemEventsHandler.onError("AnotherTestService->run(): INTERRUPTED");
                 e.printStackTrace();
             }
         }

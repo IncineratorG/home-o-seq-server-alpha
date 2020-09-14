@@ -3,13 +3,18 @@ package com.touristskaya.homeoseq.server;
 import com.touristskaya.homeoseq.common.actions.ActionsDispatcher;
 import com.touristskaya.homeoseq.common.actions.action.Action;
 import com.touristskaya.homeoseq.common.notifier.Notifier;
+import com.touristskaya.homeoseq.common.service.Service;
 import com.touristskaya.homeoseq.common.system_events_handler.SystemEventsHandler;
 import com.touristskaya.homeoseq.server.services.another_test_service.AnotherTestService;
 import com.touristskaya.homeoseq.server.services.communication_service.CommunicationService;
+import com.touristskaya.homeoseq.server.services.surveillance.SurveillanceService;
 import com.touristskaya.homeoseq.server.services.test_service.TestService;
 import com.touristskaya.homeoseq.server.system_actions.actions.SystemActions;
 import com.touristskaya.homeoseq.server.system_actions.dispatcher.SystemActionsDispatcher;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class Server extends Thread {
@@ -19,10 +24,7 @@ public class Server extends Thread {
 
     private Notifier mNotifier;
     private ActionsDispatcher mActionsDispatcher;
-
-    private CommunicationService mCommunicationService;
-    private TestService mTestService;
-    private AnotherTestService mAnotherTestService;
+    private List<Service> mServices;
 
     public static synchronized Server get() {
         if (mInstance != null) {
@@ -51,9 +53,14 @@ public class Server extends Thread {
             }
         }));
 
-        mCommunicationService = new CommunicationService(mActionsDispatcher);
-        mTestService = new TestService(mActionsDispatcher);
-        mAnotherTestService = new AnotherTestService(mActionsDispatcher);
+        mServices = new ArrayList<>(
+                Arrays.asList(
+                        new CommunicationService(mActionsDispatcher),
+                        new TestService(mActionsDispatcher),
+                        new AnotherTestService(mActionsDispatcher),
+                        new SurveillanceService(mActionsDispatcher)
+                )
+        );
     }
 
     public ActionsDispatcher getDispatcher() {
@@ -64,9 +71,7 @@ public class Server extends Thread {
     public void run() {
         SystemEventsHandler.onInfo("SERVER_IS_RUNNING");
 
-        mCommunicationService.startService();
-        mTestService.startService();
-        mAnotherTestService.startService();
+        mServices.forEach(Service::startService);
 
         while (true) {
             try {
@@ -76,14 +81,18 @@ public class Server extends Thread {
                 if (s.equals("STOP")) {
                     SystemEventsHandler.onInfo("STOPPING_SERVER");
 
-                    mTestService.stopService();
-                    mTestService.join();
+                    mServices.forEach(service -> {
+                        service.stopService();
 
-                    mAnotherTestService.stopService();
-                    mAnotherTestService.join();
-
-                    mCommunicationService.stopService();
-                    mCommunicationService.join();
+                        if (service instanceof Thread) {
+                            Thread threadedService = (Thread) service;
+                            try {
+                                threadedService.join();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
 
                     break;
                 }

@@ -3,8 +3,10 @@ package com.touristskaya.homeoseq.screens.main.controllers;
 import com.touristskaya.homeoseq.common.actions.ActionsDispatcher;
 import com.touristskaya.homeoseq.common.payload.Payload;
 import com.touristskaya.homeoseq.common.promise.Promise;
+import com.touristskaya.homeoseq.common.service.Service;
 import com.touristskaya.homeoseq.common.system_events_handler.SystemEventsHandler;
 import com.touristskaya.homeoseq.server.Server;
+import com.touristskaya.homeoseq.server.services.surveillance.surveillance.surveillance_status.SurveillanceStatus;
 import com.touristskaya.homeoseq.server.system_actions.actions.SystemActions;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -23,33 +25,87 @@ public class MainViewController<T> implements Initializable {
         leftButton.setOnAction((e) -> {
             SystemEventsHandler.onInfo("LEFT_BUTTON_CLICK");
 
+            // ===
+//            ActionsDispatcher dispatcher = Server.get().getDispatcher();
+//
+//            dispatcher.dispatch(
+//                    SystemActions.surveillanceServiceActions.getStatusAction()
+//            );
+            // ===
+
+            // ===
             ActionsDispatcher dispatcher = Server.get().getDispatcher();
 
-            Promise<Integer> calculatePromise = new Promise<>();
-            calculatePromise.then(result -> {
-                SystemEventsHandler.onInfo("RESULT: " + result);
+            Promise<Boolean> resultPromise = new Promise<>();
+            resultPromise.then(result -> {
+                SystemEventsHandler.onInfo("Controller->START_RESULT: " + result);
             });
 
-            Promise<Payload> promise = new Promise<>();
-            promise.then(payload -> {
-                dispatcher.dispatch(SystemActions.anotherTestServiceActions.calculateAction(payload, calculatePromise));
-            });
+            dispatcher.dispatch(
+                    SystemActions.surveillanceServiceActions.startSurveillanceAction(resultPromise)
+            );
+            // ===
 
-            dispatcher.dispatch(SystemActions.testServiceActions.getDataAction(promise));
+//            ActionsDispatcher dispatcher = Server.get().getDispatcher();
+//
+//            Promise<Integer> calculatePromise = new Promise<>();
+//            calculatePromise.then(result -> {
+//                SystemEventsHandler.onInfo("RESULT: " + result);
+//            });
+//
+//            Promise<Payload> promise = new Promise<>();
+//            promise.then(payload -> {
+//                dispatcher.dispatch(SystemActions.anotherTestServiceActions.calculateAction(payload, calculatePromise));
+//            });
+//
+//            dispatcher.dispatch(SystemActions.testServiceActions.getDataAction(promise));
         });
 
         rightButton.setOnAction((e) -> {
             SystemEventsHandler.onInfo("RIGHT_BUTTON_CLICK");
 
-            Promise<Boolean> promise = new Promise<>();
-            promise.then(result -> {
-                SystemEventsHandler.onInfo("DATA_SEND_PROMISE: " + result);
+            // ===
+            ActionsDispatcher dispatcher = Server.get().getDispatcher();
+
+            Promise<SurveillanceStatus> resultPromise = new Promise<>();
+            resultPromise.then(result -> {
+                SystemEventsHandler.onInfo("");
+                SystemEventsHandler.onInfo("===========");
+                SystemEventsHandler.onInfo("Controller->GET_STATUS_RESULT: " + result.getTimestamp());
+                SystemEventsHandler.onInfo("Controller->GET_STATUS_RESULT: " + result.getIsRunning());
+                SystemEventsHandler.onInfo("Controller->GET_STATUS_RESULT: " + result.getTestStringValue());
+                SystemEventsHandler.onInfo("===========");
+                SystemEventsHandler.onInfo("");
             });
 
-            ActionsDispatcher dispatcher = Server.get().getDispatcher();
             dispatcher.dispatch(
-                    SystemActions.communicationServiceActions.sendTestDataAction("TEST_DATA", promise)
+                    SystemActions.surveillanceServiceActions.getStatusAction(resultPromise)
             );
+            // ===
+
+            // ===
+//            ActionsDispatcher dispatcher = Server.get().getDispatcher();
+//
+//            Promise<Boolean> resultPromise = new Promise<>();
+//            resultPromise.then(result -> {
+//                SystemEventsHandler.onInfo("Controller->STOP_RESULT: " + result);
+//            });
+//
+//            dispatcher.dispatch(SystemActions.surveillanceServiceActions.stopSurveillanceAction(resultPromise));
+            // ===
+
+//            Promise<Boolean> promise = new Promise<>();
+//            promise.then(result -> {
+//                SystemEventsHandler.onInfo("DATA_SEND_PROMISE: " + result);
+//            });
+//
+//            ActionsDispatcher dispatcher = Server.get().getDispatcher();
+//            dispatcher.dispatch(
+//                    SystemActions.communicationServiceActions.sendTestDataAction("TEST_DATA", promise)
+//            );
+        });
+    }
+}
 
 //            Promise<String> p = new Promise<>();
 
@@ -79,15 +135,3 @@ public class MainViewController<T> implements Initializable {
 //            } catch (InstantiationException e1) {
 //                e1.printStackTrace();
 //            }
-        });
-    }
-
-//    public Promise<T> func(Promise<T> promise) {
-//        return promise;
-//    }
-
-//    public <T> void func(Promise<T> promise, Class<T> typeKey)
-//            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-//        promise.resolve(typeKey.getConstructor().newInstance());
-//    }
-}

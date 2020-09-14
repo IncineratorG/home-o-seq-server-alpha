@@ -13,6 +13,8 @@ import com.touristskaya.homeoseq.common.service.ActionsBuffer;
 import com.touristskaya.homeoseq.common.service.Service;
 import com.touristskaya.homeoseq.common.service.ServiceActions;
 import com.touristskaya.homeoseq.common.system_events_handler.SystemEventsHandler;
+import com.touristskaya.homeoseq.server.services.communication_service.requests_processor.RequestsProcessor;
+import com.touristskaya.homeoseq.server.services.communication_service.service_actions.CommunicationServiceActions;
 import com.touristskaya.homeoseq.server.system_actions.actions.SystemActions;
 import com.touristskaya.homeoseq.server.system_actions.dispatcher.SystemActionsDispatcher;
 
@@ -25,6 +27,7 @@ public class CommunicationService extends Thread implements Service {
     private CommunicationServiceActions mServiceActions;
     private ActionsBuffer mActionsBuffer;
     private CommunicationManager mCommunicationManager;
+    private RequestsProcessor mRequestsProcessor;
 
     public CommunicationService(ActionsDispatcher actionsDispatcher) {
         mActionsDispatcher = actionsDispatcher;
@@ -41,22 +44,10 @@ public class CommunicationService extends Thread implements Service {
         });
 
         mCommunicationManager = new CommunicationManager(new FirebaseCommunicationBridge());
-        mCommunicationManager.onRequestReceived(this::processRequest);
-    }
 
-    private void processRequest(ClientRequest request) {
-        switch (request.getType()) {
-            case (ClientRequestTypes.RUN_LONG_RUNNING_TASK): {
-                mCommunicationManager.sendResponseMessage(
-                        CommunicationMessages.confirmReceiveRequestMessage(request.getUuid())
-                );
+        mRequestsProcessor = new RequestsProcessor(mCommunicationManager, mActionsDispatcher);
 
-                mActionsDispatcher.dispatch(
-                        SystemActions.testServiceActions.runLongRunningTaskAction(new Promise<>())
-                );
-                break;
-            }
-        }
+        mCommunicationManager.onRequestReceived(request -> {mRequestsProcessor.process(request);});
     }
 
     @Override

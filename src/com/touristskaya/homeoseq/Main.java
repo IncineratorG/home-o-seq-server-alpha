@@ -1,7 +1,5 @@
 package com.touristskaya.homeoseq;
 
-import com.touristskaya.homeoseq.common.actions.ActionsDispatcher;
-import com.touristskaya.homeoseq.common.system_events_handler.SystemEventsHandler;
 import com.touristskaya.homeoseq.server.Server;
 import com.touristskaya.homeoseq.server.system_actions.actions.SystemActions;
 import javafx.application.Application;
@@ -27,7 +25,6 @@ public class Main extends Application {
 
         Server.get().getDispatcher().dispatch(SystemActions.serverActions.stopServerAction());
     }
-
 
     public static void main(String[] args) {
         launch(args);
