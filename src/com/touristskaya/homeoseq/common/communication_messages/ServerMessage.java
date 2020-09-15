@@ -21,6 +21,8 @@ public class ServerMessage {
     }
 
     public ServerMessage(String type, String requestUuid, String stringifiedPayload) {
+        this.type = type;
+        this.requestUuid = requestUuid;
         this.stringifiedPayload = stringifiedPayload;
     }
 

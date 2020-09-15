@@ -6,6 +6,7 @@ import com.touristskaya.homeoseq.common.client_requests.ClientRequest;
 import com.touristskaya.homeoseq.common.client_requests.ClientRequestTypes;
 import com.touristskaya.homeoseq.common.communication_manager.CommunicationManager;
 import com.touristskaya.homeoseq.common.communication_messages.CommunicationMessages;
+import com.touristskaya.homeoseq.common.communication_messages.ServerMessage;
 import com.touristskaya.homeoseq.common.promise.Promise;
 import com.touristskaya.homeoseq.common.system_events_handler.SystemEventsHandler;
 import com.touristskaya.homeoseq.server.services.surveillance.surveillance.surveillance_status.SurveillanceStatus;
