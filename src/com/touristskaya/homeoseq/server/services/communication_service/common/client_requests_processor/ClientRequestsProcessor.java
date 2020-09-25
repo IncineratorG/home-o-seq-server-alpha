@@ -71,11 +71,6 @@ public class ClientRequestsProcessor {
                 // ===================
                 // === Не доделано ===
                 // ===================
-                Promise<BufferedImage> imagePromise = new Promise<>();
-                imagePromise.then(image -> {
-
-                });
-
                 String cameraId = mPayloadExtractor.getCameraImageRequest(request);
                 if (cameraId == null) {
                     mCommunicationManager.sendResponseMessage(
@@ -84,6 +79,21 @@ public class ClientRequestsProcessor {
                 }
 
                 SystemEventsHandler.onInfo("ClientRequestsProcessor->CAMERA_ID: " + cameraId);
+
+                Promise<BufferedImage> imagePromise = new Promise<>();
+                imagePromise.then(image -> {
+                    String serializedImageData = mDataSerializer.serialize(cameraId, image);
+
+                    mCommunicationManager.sendResponseMessage(
+                            CommunicationMessages.requestResultMessage(request.getUuid(), serializedImageData)
+                    );
+
+//                    SystemEventsHandler.onInfo("ClientRequestsProcessor->SERIALIZED_IMAGE_DATA: " + serializedImageData);
+//
+//                    mCommunicationManager.sendResponseMessage(
+//                            CommunicationMessages.errorMessage(request.getUuid(), Errors.getError(Errors.UNKNOWN_REQUEST))
+//                    );
+                });
 
                 mActionsDispatcher.dispatch(
                         Services.camerasService.actionCreators.getCameraImageAction(cameraId, imagePromise)
