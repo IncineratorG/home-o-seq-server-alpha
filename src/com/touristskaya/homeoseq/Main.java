@@ -1,7 +1,6 @@
 package com.touristskaya.homeoseq;
 
 import com.touristskaya.homeoseq.server.Server;
-import com.touristskaya.homeoseq.server.system_actions.actions.SystemActions;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -16,14 +15,14 @@ public class Main extends Application {
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
 
-        Server.get().start();
+        Server.get().startServer();
     }
 
     @Override
     public void stop() throws Exception {
         super.stop();
 
-        Server.get().getDispatcher().dispatch(SystemActions.serverActions.stopServerAction());
+        Server.get().stopServer();
     }
 
     public static void main(String[] args) {

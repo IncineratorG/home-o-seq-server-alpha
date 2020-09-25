@@ -1,16 +1,14 @@
 package com.touristskaya.homeoseq.server;
 
-import com.touristskaya.homeoseq.common.actions.ActionsDispatcher;
-import com.touristskaya.homeoseq.common.actions.action.Action;
-import com.touristskaya.homeoseq.common.notifier.Notifier;
-import com.touristskaya.homeoseq.common.service.Service;
+import com.touristskaya.homeoseq.common.actions.actions_dispatcher.ActionsDispatcher;
+import com.touristskaya.homeoseq.common.notifications.notifications_dispatcher.NotificationsDispatcher;
+import com.touristskaya.homeoseq.common.services.service.Service;
 import com.touristskaya.homeoseq.common.system_events_handler.SystemEventsHandler;
-import com.touristskaya.homeoseq.server.services.another_test_service.AnotherTestService;
+import com.touristskaya.homeoseq.server.server_actions_dispatcher.ServerActionsDispatcher;
+import com.touristskaya.homeoseq.server.server_notifications_dispatcher.ServerNotificationsDispatcher;
+import com.touristskaya.homeoseq.server.services.cameras_service.CamerasService;
 import com.touristskaya.homeoseq.server.services.communication_service.CommunicationService;
-import com.touristskaya.homeoseq.server.services.surveillance.SurveillanceService;
 import com.touristskaya.homeoseq.server.services.test_service.TestService;
-import com.touristskaya.homeoseq.server.system_actions.actions.SystemActions;
-import com.touristskaya.homeoseq.server.system_actions.dispatcher.SystemActionsDispatcher;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,11 +18,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class Server extends Thread {
     private static Server mInstance;
 
-    private LinkedBlockingQueue<String> q = new LinkedBlockingQueue<>();
+    private LinkedBlockingQueue<String> mServerActionsQueue;
+    private static final String STOP_SERVER_ACTION = "STOP_SERVER_ACTION";
 
-    private Notifier mNotifier;
-    private ActionsDispatcher mActionsDispatcher;
     private List<Service> mServices;
+
+    private ActionsDispatcher mActionsDispatcher;
+    private NotificationsDispatcher mNotificationsDispatcher;
 
     public static synchronized Server get() {
         if (mInstance != null) {
@@ -36,35 +36,39 @@ public class Server extends Thread {
     }
 
     private Server() {
-        mNotifier = new Notifier();
+        mActionsDispatcher = new ServerActionsDispatcher();
+        mNotificationsDispatcher = new ServerNotificationsDispatcher();
 
-        mActionsDispatcher = new SystemActionsDispatcher();
-        mActionsDispatcher.subscribe(SystemActionsDispatcher.NEW_ACTION_EVENT, (data -> {
-            Action action = (Action) data;
-            if (!action.getType().equals(SystemActions.serverActions.STOP_SERVER)) {
-                return;
-            }
-
-            String payload = (String) action.getPayload();
-            try {
-                q.put(payload);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }));
+        mServerActionsQueue = new LinkedBlockingQueue<>();
 
         mServices = new ArrayList<>(
                 Arrays.asList(
-                        new CommunicationService(mActionsDispatcher),
-                        new TestService(mActionsDispatcher),
-                        new AnotherTestService(mActionsDispatcher),
-                        new SurveillanceService(mActionsDispatcher)
+                        new CommunicationService(mActionsDispatcher, mNotificationsDispatcher),
+                        new CamerasService(mActionsDispatcher, mNotificationsDispatcher),
+                        new TestService(mActionsDispatcher, mNotificationsDispatcher)
                 )
         );
     }
 
-    public ActionsDispatcher getDispatcher() {
+    public ActionsDispatcher getActionsDispatcher() {
         return mActionsDispatcher;
+    }
+
+    public NotificationsDispatcher getNotificationsDispatcher() {
+        return mNotificationsDispatcher;
+    }
+
+    public void startServer() {
+        start();
+    }
+
+    public void stopServer() {
+        try {
+            mServerActionsQueue.put(STOP_SERVER_ACTION);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            SystemEventsHandler.onError(e.getMessage());
+        }
     }
 
     @Override
@@ -75,12 +79,9 @@ public class Server extends Thread {
 
         while (true) {
             try {
-                String s = q.take();
-                SystemEventsHandler.onInfo("TAKEN: " + s);
+                String actionType = mServerActionsQueue.take();
 
-                if (s.equals("STOP")) {
-                    SystemEventsHandler.onInfo("STOPPING_SERVER");
-
+                if (actionType.equals(STOP_SERVER_ACTION)) {
                     mServices.forEach(service -> {
                         service.stopService();
 
@@ -90,6 +91,7 @@ public class Server extends Thread {
                                 threadedService.join();
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
+                                SystemEventsHandler.onError(e.getMessage());
                             }
                         }
                     });
@@ -97,103 +99,9 @@ public class Server extends Thread {
                     break;
                 }
             } catch (InterruptedException e) {
-                SystemEventsHandler.onInfo("INTERRUPTED");
                 e.printStackTrace();
+                SystemEventsHandler.onError(e.getMessage());
             }
         }
     }
 }
-
-//        List<String> list = new ArrayList<>();
-////        list.add("ONE");
-//        list.add("TWO");
-////        list.add("THREE");
-//
-//        Map<String, List<String>> map = new ConcurrentHashMap<>();
-//        map.put("FIRST", list);
-//
-//        List<String> resultList = map.get("FIRST")
-//                .stream()
-//                .filter(str -> !str.equals("TWO"))
-//                .collect(Collectors.toList());
-//
-//        System.out.println(resultList.size());
-//
-//        map.put("FIRST", resultList);
-//
-//        List<String> l = map.get("FIRST");
-//        for (String s : l) {
-//            System.out.println(s);
-//        }
-
-// ===
-//        Map<String, List<String>> map = new ConcurrentHashMap<>();
-//
-//        List<String> list_1 = new ArrayList<>();
-//        list_1.add("FIRST_ONE");
-//        if (map.containsKey("FIRST")) {
-//            list_1.addAll(map.get("FIRST"));
-//        }
-//
-//        map.put("FIRST", list_1);
-//
-//        List<String> list_2 = new ArrayList<>();
-//        list_2.add("FIRST_TWO");
-//        if (map.containsKey("FIRST")) {
-//            list_2.addAll(map.get("FIRST"));
-//        }
-//
-//        map.put("FIRST", list_2);
-//
-//        List<String> list_3 = new ArrayList<>();
-//        list_3.add("SECOND_ONE");
-//        if (map.containsKey("SECOND")) {
-//            list_3.addAll(map.get("SECOND"));
-//        }
-//
-//        map.put("SECOND", list_3);
-//
-//        List<String> list = map.get("FIRST");
-//        for (String s : list) {
-//            System.out.println(s);
-//        }
-
-// =====
-// =====
-
-//        Map<String, List<Action>> map = new ConcurrentHashMap<>();
-//
-//        List<Action> list_1 = new ArrayList<>();
-//        if (map.containsKey("TEST_ACTION")) {
-//            list_1.addAll(map.get("TEST_ACTION"));
-//        }
-//        list_1.add(new Action("TEST_ACTION", null));
-//
-//        map.put("TEST_ACTION", list_1);
-//
-//        List<Action> list_2 = new ArrayList<>();
-//        if (map.containsKey("TEST_ACTION")) {
-//            list_2.addAll(map.get("TEST_ACTION"));
-//        }
-//        list_2.add(new Action("TEST_ACTION", null));
-//
-//        map.put("TEST_ACTION", list_2);
-//
-//        System.out.println("MAP_SIZE: " + map.size());
-//        System.out.println("LIST_SIZE: " + map.get("TEST_ACTION").size());
-
-//        Map<String, List<Action>> map = new ConcurrentHashMap<>();
-//
-//        List<Action> list_1 = new CopyOnWriteArrayList<>(map.get("TEST_ACTION") == null ? map.get("TEST_ACTION") : new ArrayList<>());
-//        list_1.add(new Action("TEST_ACTION", null));
-//
-//        map.put("TEST_ACTION", list_1);
-//
-//        List<Action> list_2 = new CopyOnWriteArrayList<>(map.get("TEST_ACTION"));
-//        list_2.add(new Action("TEST_ACTION", null));
-//
-//        map.put("TEST_ACTION", list_2);
-//
-//        System.out.println("MAP_SIZE: " + map.size());
-//        System.out.println("LIST_SIZE: " + map.get("TEST_ACTION").size());
-// ===
