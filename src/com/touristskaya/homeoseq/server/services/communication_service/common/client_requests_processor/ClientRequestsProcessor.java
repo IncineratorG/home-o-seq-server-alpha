@@ -1,5 +1,9 @@
 package com.touristskaya.homeoseq.server.services.communication_service.common.client_requests_processor;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.touristskaya.homeoseq.common.actions.actions_dispatcher.ActionsDispatcher;
 import com.touristskaya.homeoseq.common.camera.Camera;
 import com.touristskaya.homeoseq.common.promise.Promise;
@@ -14,7 +18,9 @@ import com.touristskaya.homeoseq.server.services.communication_service.common.co
 import com.touristskaya.homeoseq.server.services.communication_service.common.data_serializer.DataSerializer;
 
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ClientRequestsProcessor {
     private CommunicationManager mCommunicationManager;
@@ -42,6 +48,26 @@ public class ClientRequestsProcessor {
                 mCommunicationManager.sendResponseMessage(
                         CommunicationMessages.requestResultMessage(request.getUuid(), String.valueOf(true))
                 );
+
+                break;
+            }
+
+            case (ClientRequestTypes.GET_APARTMENT_STATUS): {
+                // ===
+                // 1. Отсылать информацию о доступных камерах.
+                Promise<List<Camera>> allCamerasResultPromise = new Promise<>();
+                allCamerasResultPromise.then(cameras -> {
+                    String serializedCameras = mDataSerializer.serialize(cameras, true);
+
+                    mCommunicationManager.sendResponseMessage(
+                            CommunicationMessages.requestResultMessage(request.getUuid(), serializedCameras)
+                    );
+                });
+
+                mActionsDispatcher.dispatch(
+                        Services.camerasService.actionCreators.getAllCamerasAction(allCamerasResultPromise)
+                );
+                // ===
 
                 break;
             }

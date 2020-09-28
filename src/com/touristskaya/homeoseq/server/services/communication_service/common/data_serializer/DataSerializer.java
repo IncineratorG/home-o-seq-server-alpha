@@ -1,6 +1,6 @@
 package com.touristskaya.homeoseq.server.services.communication_service.common.data_serializer;
 
-import com.google.gson.Gson;
+import com.google.gson.*;
 import com.touristskaya.homeoseq.common.camera.Camera;
 import com.touristskaya.old_homoseq.homeoseq.common.system_events_handler.SystemEventsHandler;
 
@@ -18,23 +18,59 @@ public class DataSerializer {
     }
 
     public String serialize(List<Camera> cameras) {
-        Map<String, List<Map<String, String>>> serializedCamerasMap = new HashMap<>();
+        JsonArray jsonArray = new JsonArray();
 
-        List<Map<String, String>> serializedCamerasList = new ArrayList<>();
         cameras.forEach(camera -> {
             String id = camera.getId();
             String name = camera.getName();
 
-            Map<String, String> serializedCameraMap = new HashMap<>();
-            serializedCameraMap.put("id", id);
-            serializedCameraMap.put("name", name);
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("id", id);
+            jsonObject.addProperty("name", name);
 
-            serializedCamerasList.add(serializedCameraMap);
+            jsonArray.add(jsonObject);
         });
 
-        serializedCamerasMap.put("cameras", serializedCamerasList);
+        return mGson.toJson(jsonArray);
 
-        return mGson.toJson(serializedCamerasMap);
+//        Map<String, List<Map<String, String>>> serializedCamerasMap = new HashMap<>();
+//
+//        List<Map<String, String>> serializedCamerasList = new ArrayList<>();
+//        cameras.forEach(camera -> {
+//            String id = camera.getId();
+//            String name = camera.getName();
+//
+//            Map<String, String> serializedCameraMap = new HashMap<>();
+//            serializedCameraMap.put("id", id);
+//            serializedCameraMap.put("name", name);
+//
+//            serializedCamerasList.add(serializedCameraMap);
+//        });
+//
+//        serializedCamerasMap.put("cameras", serializedCamerasList);
+//
+//        return mGson.toJson(serializedCamerasMap);
+    }
+
+    public String serialize(List<Camera> cameras, boolean isAlive) {
+        JsonArray jsonArray = new JsonArray();
+
+        cameras.forEach(camera -> {
+            String id = camera.getId();
+            String name = camera.getName();
+
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("id", id);
+            jsonObject.addProperty("name", name);
+
+            jsonArray.add(jsonObject);
+        });
+
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.add("cameras", jsonArray);
+        jsonObject.add("isAlive", new JsonPrimitive(isAlive));
+
+        return mGson.toJson(jsonObject);
     }
 
     public String serialize(String cameraId, BufferedImage image) {
