@@ -68,17 +68,15 @@ public class ClientRequestsProcessor {
             }
 
             case (ClientRequestTypes.GET_CAMERA_IMAGE): {
-                // ===================
-                // === Не доделано ===
-                // ===================
                 String cameraId = mPayloadExtractor.getCameraImageRequest(request);
                 if (cameraId == null) {
                     mCommunicationManager.sendResponseMessage(
-                            CommunicationMessages.errorMessage(request.getUuid(), Errors.getError(Errors.BAD_REQUEST_DATA))
+                            CommunicationMessages.errorMessage(
+                                    request.getUuid(),
+                                    Errors.getError(Errors.BAD_REQUEST_DATA)
+                            )
                     );
                 }
-
-                SystemEventsHandler.onInfo("ClientRequestsProcessor->CAMERA_ID: " + cameraId);
 
                 Promise<BufferedImage> imagePromise = new Promise<>();
                 imagePromise.then(image -> {
@@ -87,19 +85,11 @@ public class ClientRequestsProcessor {
                     mCommunicationManager.sendResponseMessage(
                             CommunicationMessages.requestResultMessage(request.getUuid(), serializedImageData)
                     );
-
-//                    SystemEventsHandler.onInfo("ClientRequestsProcessor->SERIALIZED_IMAGE_DATA: " + serializedImageData);
-//
-//                    mCommunicationManager.sendResponseMessage(
-//                            CommunicationMessages.errorMessage(request.getUuid(), Errors.getError(Errors.UNKNOWN_REQUEST))
-//                    );
                 });
 
                 mActionsDispatcher.dispatch(
                         Services.camerasService.actionCreators.getCameraImageAction(cameraId, imagePromise)
                 );
-                // ===================
-                // ===================
 
                 break;
             }
@@ -115,39 +105,4 @@ public class ClientRequestsProcessor {
 
         SystemEventsHandler.onInfo("");
     }
-
-//    public void process(ClientRequest request) {
-//        mCommunicationManager.sendResponseMessage(
-//                CommunicationMessages.confirmReceiveRequestMessage(request.getUuid())
-//        );
-//
-//        switch (request.getType()) {
-//            case (ClientRequestTypes.RUN_LONG_RUNNING_TASK): {
-////                mActionsDispatcher.dispatch(
-////                        SystemActions.testServiceActions.runLongRunningTaskAction(new Promise<>())
-////                );
-//                break;
-//            }
-//
-//            case (ClientRequestTypes.GET_SURVEILLANCE_STATUS): {
-////                Promise<SurveillanceStatus> resultPromise = new Promise<>();
-////                resultPromise.then(result -> {
-////                    Gson gson = new Gson();
-////                    String stringifiedResult = gson.toJson(result);
-////
-////                    SystemEventsHandler.onInfo("RequestProcessor->GET_SURVEILLANCE_STATUS->RESULT: " + stringifiedResult);
-////
-////                    mCommunicationManager.sendResponseMessage(
-////                            CommunicationMessages.requestResultMessage(request.getUuid(), stringifiedResult)
-////                    );
-////                });
-////
-////                mActionsDispatcher.dispatch(
-////                        SystemActions.surveillanceServiceActions.getStatusAction(resultPromise)
-////                );
-//
-//                break;
-//            }
-//        }
-//    }
 }
