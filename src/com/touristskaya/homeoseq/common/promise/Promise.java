@@ -1,5 +1,6 @@
 package com.touristskaya.homeoseq.common.promise;
 
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
 
 public class Promise<T> {
@@ -7,8 +8,10 @@ public class Promise<T> {
     private Consumer<String> mErrorAcceptor;
     private T mResult;
     private String mError;
+    private LinkedBlockingQueue<T> mResultQueue;
 
     public Promise() {
+        mResultQueue = new LinkedBlockingQueue<>();
         mResultAcceptor = null;
         mErrorAcceptor = null;
         mResult = null;
@@ -21,6 +24,12 @@ public class Promise<T> {
         if (mResultAcceptor != null) {
             mResultAcceptor.accept(mResult);
         }
+
+        try {
+            mResultQueue.put(result);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void reject(String error) {
@@ -29,6 +38,17 @@ public class Promise<T> {
         if (mErrorAcceptor != null) {
             mErrorAcceptor.accept(mError);
         }
+    }
+
+    public T get() {
+        T result = null;
+        try {
+            result = mResultQueue.take();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return result;
     }
 
     public void then(Consumer<T> resultAcceptor) {

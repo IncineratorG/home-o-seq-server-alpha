@@ -20,6 +20,10 @@ public class CamerasServiceActionCreators implements ActionCreators {
         return new Action(mActionTypes.STOP_SERVICE);
     }
 
+    public Action testAction(Promise<String> result) {
+        return new Action(mActionTypes.TEST_ACTION, result);
+    }
+
     public Action getImageAction(Promise<String> result) {
         return new Action(mActionTypes.GET_IMAGE, result);
     }

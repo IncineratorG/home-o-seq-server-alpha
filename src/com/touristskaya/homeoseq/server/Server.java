@@ -43,7 +43,7 @@ public class Server extends Thread {
 
         mServices = new ArrayList<>(
                 Arrays.asList(
-                        new CommunicationService(mActionsDispatcher, mNotificationsDispatcher),
+//                        new CommunicationService(mActionsDispatcher, mNotificationsDispatcher),
                         new CamerasService(mActionsDispatcher, mNotificationsDispatcher),
                         new TestService(mActionsDispatcher, mNotificationsDispatcher)
                 )

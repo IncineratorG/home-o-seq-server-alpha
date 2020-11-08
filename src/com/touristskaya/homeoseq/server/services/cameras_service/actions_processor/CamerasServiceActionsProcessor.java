@@ -43,6 +43,8 @@ public class CamerasServiceActionsProcessor implements ActionsProcessor {
                             mCamerasManager.getCameraImage(cameraId)
                     )
             );
+        } else if (action.getType().equals(mServiceDescription.actionTypes.TEST_ACTION)) {
+            action.complete("STRING");
         }
 
         return false;
