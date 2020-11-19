@@ -1,9 +1,9 @@
-package com.touristskaya.homeoseq.server.services.test_service.service_description.action_creators;
+package com.touristskaya.homeoseq.server.services.test_service.service_description.actions.action_creators;
 
 import com.touristskaya.homeoseq.data.common.actions.action.Action;
 import com.touristskaya.homeoseq.data.common.actions.action_creators.ActionCreators;
 import com.touristskaya.homeoseq.data.common.promise.Promise;
-import com.touristskaya.homeoseq.server.services.test_service.service_description.action_types.TestServiceActionTypes;
+import com.touristskaya.homeoseq.server.services.test_service.service_description.actions.action_types.TestServiceActionTypes;
 
 public class TestServiceActionCreators implements ActionCreators {
     private TestServiceActionTypes mActionTypes;

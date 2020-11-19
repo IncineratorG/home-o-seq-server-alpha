@@ -1,10 +1,10 @@
-package com.touristskaya.homeoseq.server.services.cameras_service.service_description.action_creators;
+package com.touristskaya.homeoseq.server.services.cameras_service.service_description.actions.action_creators;
 
 import com.touristskaya.homeoseq.data.common.actions.action.Action;
 import com.touristskaya.homeoseq.data.common.actions.action_creators.ActionCreators;
 import com.touristskaya.homeoseq.data.common.camera.Camera;
 import com.touristskaya.homeoseq.data.common.promise.Promise;
-import com.touristskaya.homeoseq.server.services.cameras_service.service_description.action_types.CamerasServiceActionTypes;
+import com.touristskaya.homeoseq.server.services.cameras_service.service_description.actions.action_types.CamerasServiceActionTypes;
 
 import java.awt.image.BufferedImage;
 import java.util.List;

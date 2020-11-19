@@ -5,10 +5,10 @@ import com.touristskaya.homeoseq.data.common.actions.action_results.ActionResult
 import com.touristskaya.homeoseq.data.common.actions.action_types.ActionTypes;
 import com.touristskaya.homeoseq.data.common.notifications.notification_types.NotificationTypes;
 import com.touristskaya.homeoseq.data.common.services.service_description.ServiceDescription;
-import com.touristskaya.homeoseq.server.services.cameras_service.service_description.action_creators.CamerasServiceActionCreators;
-import com.touristskaya.homeoseq.server.services.cameras_service.service_description.action_results.CamerasServiceActionResults;
-import com.touristskaya.homeoseq.server.services.cameras_service.service_description.action_types.CamerasServiceActionTypes;
-import com.touristskaya.homeoseq.server.services.cameras_service.service_description.notification_types.CamerasServiceNotificationTypes;
+import com.touristskaya.homeoseq.server.services.cameras_service.service_description.actions.action_creators.CamerasServiceActionCreators;
+import com.touristskaya.homeoseq.server.services.cameras_service.service_description.actions.action_results.CamerasServiceActionResults;
+import com.touristskaya.homeoseq.server.services.cameras_service.service_description.actions.action_types.CamerasServiceActionTypes;
+import com.touristskaya.homeoseq.server.services.cameras_service.service_description.notifications.notification_types.CamerasServiceNotificationTypes;
 
 public class CamerasServiceDescription implements ServiceDescription {
     public final CamerasServiceActionTypes actionTypes = new CamerasServiceActionTypes();

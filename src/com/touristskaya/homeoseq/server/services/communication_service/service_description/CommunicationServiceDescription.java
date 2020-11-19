@@ -5,10 +5,10 @@ import com.touristskaya.homeoseq.data.common.actions.action_results.ActionResult
 import com.touristskaya.homeoseq.data.common.actions.action_types.ActionTypes;
 import com.touristskaya.homeoseq.data.common.notifications.notification_types.NotificationTypes;
 import com.touristskaya.homeoseq.data.common.services.service_description.ServiceDescription;
-import com.touristskaya.homeoseq.server.services.communication_service.service_description.action_creators.CommunicationServiceActionCreators;
-import com.touristskaya.homeoseq.server.services.communication_service.service_description.action_results.CommunicationServiceActionResults;
-import com.touristskaya.homeoseq.server.services.communication_service.service_description.action_types.CommunicationServiceActionTypes;
-import com.touristskaya.homeoseq.server.services.communication_service.service_description.notification_types.CommunicationServiceNotificationTypes;
+import com.touristskaya.homeoseq.server.services.communication_service.service_description.actions.action_creators.CommunicationServiceActionCreators;
+import com.touristskaya.homeoseq.server.services.communication_service.service_description.actions.action_results.CommunicationServiceActionResults;
+import com.touristskaya.homeoseq.server.services.communication_service.service_description.actions.action_types.CommunicationServiceActionTypes;
+import com.touristskaya.homeoseq.server.services.communication_service.service_description.notifications.notification_types.CommunicationServiceNotificationTypes;
 
 public class CommunicationServiceDescription implements ServiceDescription {
     public final CommunicationServiceActionTypes actionTypes = new CommunicationServiceActionTypes();

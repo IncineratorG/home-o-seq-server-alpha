@@ -1,9 +1,10 @@
 package com.touristskaya.homeoseq.data.common.services.service;
 
 import com.touristskaya.homeoseq.data.common.actions.action.Action;
-import com.touristskaya.homeoseq.data.common.actions.action_handler.ActionHandler;
+import com.touristskaya.homeoseq.data.common.actions.action_handler.ActionsHandler;
 import com.touristskaya.homeoseq.data.common.actions.actions_dispatcher.ActionsDispatcher;
 import com.touristskaya.homeoseq.data.common.events.event_handler.EventHandler;
+import com.touristskaya.homeoseq.data.common.notifications.notification.Notification;
 import com.touristskaya.homeoseq.data.common.subscription.UnsubscribeHandler;
 import com.touristskaya.homeoseq.data.common.system_events_handler.SystemEventsHandler;
 import com.touristskaya.homeoseq.data.specific.server.server_actions_dispatcher.ServerActionsDispatcher;
@@ -17,13 +18,14 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public abstract class Service extends Thread implements ActionsDispatcher {
     private ServerActionsDispatcher mDispatcher;
+    private LinkedBlockingQueue<Action> mActionsQueue;
+    private ActionsHandler mActionHandler;
+    private ActionsHandler mResultActionHandler;
+    private Set<UUID> mDispatchedActionUuids;
     private List<String> mServiceActions;
     private Set<String> mServiceActionTypes;
-    private LinkedBlockingQueue<Action> mActionsQueue;
     private String mTerminateServiceActionType;
-    private ActionHandler mActionHandler;
-    private ActionHandler mResultActionHandler;
-    private Set<UUID> mDispatchedActionUuids;
+    private LinkedBlockingQueue<Notification> mNotificationsQueue;
 
     protected abstract ServerActionsDispatcher systemDispatcher();
 
@@ -31,7 +33,7 @@ public abstract class Service extends Thread implements ActionsDispatcher {
 
     protected abstract String terminateServiceActionType();
 
-    protected abstract ActionHandler actionHandler();
+    protected abstract ActionsHandler actionsHandler();
 
     protected abstract void beforeStart();
 
@@ -45,7 +47,7 @@ public abstract class Service extends Thread implements ActionsDispatcher {
             }
         };
 
-        mActionHandler = actionHandler();
+        mActionHandler = actionsHandler();
         mActionsQueue = new LinkedBlockingQueue<>();
         mDispatcher = systemDispatcher();
 
@@ -56,7 +58,7 @@ public abstract class Service extends Thread implements ActionsDispatcher {
 
         mDispatcher.subscribe(ServerActionsDispatcher.NEW_ACTION_EVENT, (actionData) -> {
             Action action = (Action) actionData;
-            if (mServiceActionTypes.contains(action.getType())) {
+            if (mServiceActionTypes.contains(action.type())) {
                 try {
                     mActionsQueue.put(action);
                 } catch (InterruptedException e) {
@@ -68,7 +70,7 @@ public abstract class Service extends Thread implements ActionsDispatcher {
 
         mDispatcher.subscribe(ServerActionsDispatcher.ACTION_RESULT_EVENT, (actionData) -> {
             Action action = (Action) actionData;
-            if (mDispatchedActionUuids.contains(action.getUuid())) {
+            if (mDispatchedActionUuids.contains(action.uuid())) {
                 try {
                     mActionsQueue.put(action);
                 } catch (InterruptedException e) {
@@ -81,7 +83,7 @@ public abstract class Service extends Thread implements ActionsDispatcher {
 
     @Override
     public void dispatch(Action action) {
-        mDispatchedActionUuids.add(action.getUuid());
+        mDispatchedActionUuids.add(action.uuid());
         mDispatcher.dispatch(action);
     }
 
@@ -115,7 +117,7 @@ public abstract class Service extends Thread implements ActionsDispatcher {
             try {
                 Action action = mActionsQueue.take();
 
-                if (mDispatchedActionUuids.contains(action.getUuid())) {
+                if (mDispatchedActionUuids.contains(action.uuid())) {
                     if (mResultActionHandler != null) {
                         mResultActionHandler.onAction(action);
                     }
@@ -125,7 +127,7 @@ public abstract class Service extends Thread implements ActionsDispatcher {
                     }
                 }
 
-                if (action.getType().equals(mTerminateServiceActionType)) {
+                if (action.type().equals(mTerminateServiceActionType)) {
                     cleanup();
                     break;
                 }

@@ -1,6 +1,6 @@
 package com.touristskaya.homeoseq.server.services.cameras_service;
 
-import com.touristskaya.homeoseq.data.common.actions.action_handler.ActionHandler;
+import com.touristskaya.homeoseq.data.common.actions.action_handler.ActionsHandler;
 import com.touristskaya.homeoseq.data.common.services.service.Service;
 import com.touristskaya.homeoseq.data.common.system_events_handler.SystemEventsHandler;
 import com.touristskaya.homeoseq.data.specific.server.server_actions_dispatcher.ServerActionsDispatcher;
@@ -13,7 +13,7 @@ import java.util.List;
 public class CamerasService extends Service {
     private CamerasServiceDescription mServiceDescription;
     private ServerActionsDispatcher mActionsDispatcher;
-    private ActionHandler mActionsHandler;
+    private ActionsHandler mActionsHandler;
 
     public CamerasService(ServerActionsDispatcher dispatcher) {
         mActionsDispatcher = dispatcher;
@@ -43,7 +43,7 @@ public class CamerasService extends Service {
     }
 
     @Override
-    protected ActionHandler actionHandler() {
+    protected ActionsHandler actionsHandler() {
         return mActionsHandler;
     }
 

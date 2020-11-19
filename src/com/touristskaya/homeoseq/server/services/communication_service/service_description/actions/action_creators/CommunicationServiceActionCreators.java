@@ -1,9 +1,9 @@
-package com.touristskaya.homeoseq.server.services.communication_service.service_description.action_creators;
+package com.touristskaya.homeoseq.server.services.communication_service.service_description.actions.action_creators;
 
 import com.touristskaya.homeoseq.data.common.actions.action.Action;
 import com.touristskaya.homeoseq.data.common.actions.action_creators.ActionCreators;
 import com.touristskaya.homeoseq.data.common.promise.Promise;
-import com.touristskaya.homeoseq.server.services.communication_service.service_description.action_types.CommunicationServiceActionTypes;
+import com.touristskaya.homeoseq.server.services.communication_service.service_description.actions.action_types.CommunicationServiceActionTypes;
 
 public class CommunicationServiceActionCreators implements ActionCreators {
     private CommunicationServiceActionTypes mActionTypes;

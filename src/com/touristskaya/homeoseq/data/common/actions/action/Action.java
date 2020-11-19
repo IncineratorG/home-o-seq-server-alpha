@@ -45,15 +45,15 @@ public class Action {
         mCompletionPromise = other.mCompletionPromise;
     }
 
-    public UUID getUuid() {
+    public UUID uuid() {
         return mUuid;
     }
 
-    public String getType() {
+    public String type() {
         return mType;
     }
 
-    public Object getPayload() {
+    public Object payload() {
         return mPayload;
     }
 
@@ -129,15 +129,15 @@ public class Action {
 //        mCompletionPromise = other.mCompletionPromise;
 //    }
 //
-//    public UUID getUuid() {
+//    public UUID uuid() {
 //        return mUuid;
 //    }
 //
-//    public String getType() {
+//    public String type() {
 //        return mType;
 //    }
 //
-//    public Object getPayload() {
+//    public Object payload() {
 //        return mPayload;
 //    }
 //

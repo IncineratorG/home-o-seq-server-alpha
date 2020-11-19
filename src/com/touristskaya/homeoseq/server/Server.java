@@ -1,6 +1,6 @@
 package com.touristskaya.homeoseq.server;
 
-import com.touristskaya.homeoseq.data.common.actions.action_handler.ActionHandler;
+import com.touristskaya.homeoseq.data.common.actions.action_handler.ActionsHandler;
 import com.touristskaya.homeoseq.data.common.actions.actions_dispatcher.ActionsDispatcher;
 import com.touristskaya.homeoseq.data.common.services.service.Service;
 import com.touristskaya.homeoseq.data.common.system_events_handler.SystemEventsHandler;
@@ -16,7 +16,7 @@ import java.util.List;
 public class Server extends Service {
     private static Server mInstance;
     private static final String STOP_SERVER_ACTION = "STOP_SERVER_ACTION";
-    private ActionHandler mActionHandler;
+    private ActionsHandler mActionHandler;
     private ServerActionsDispatcher mActionsDispatcher;
     private List<Service> mServices;
 
@@ -70,7 +70,7 @@ public class Server extends Service {
     }
 
     @Override
-    protected ActionHandler actionHandler() {
+    protected ActionsHandler actionsHandler() {
         return mActionHandler;
     }
 

@@ -1,6 +1,6 @@
 package com.touristskaya.homeoseq.server.services.communication_service;
 
-import com.touristskaya.homeoseq.data.common.actions.action_handler.ActionHandler;
+import com.touristskaya.homeoseq.data.common.actions.action_handler.ActionsHandler;
 import com.touristskaya.homeoseq.data.common.services.service.Service;
 import com.touristskaya.homeoseq.data.common.system_events_handler.SystemEventsHandler;
 import com.touristskaya.homeoseq.data.specific.server.server_actions_dispatcher.ServerActionsDispatcher;
@@ -15,7 +15,7 @@ import java.util.List;
 public class CommunicationService extends Service {
     private CommunicationServiceDescription mServiceDescription;
     private ServerActionsDispatcher mActionsDispatcher;
-    private ActionHandler mActionsHandler;
+    private ActionsHandler mActionsHandler;
     private CommunicationManager mCommunicationManager;
     private ClientRequestsProcessor mClientRequestsProcessor;
 
@@ -47,7 +47,7 @@ public class CommunicationService extends Service {
     }
 
     @Override
-    protected ActionHandler actionHandler() {
+    protected ActionsHandler actionsHandler() {
         return mActionsHandler;
     }
 
@@ -147,7 +147,7 @@ public class CommunicationService extends Service {
 //            try {
 //                Action action = mActionsQueue.take();
 //
-//                if (action.getType().equals(mServiceDescription.actionTypes.STOP_SERVICE)) {
+//                if (action.type().equals(mServiceDescription.actionTypes.STOP_SERVICE)) {
 //                    SystemEventsHandler.onInfo("STOP_COMMUNICATION_SERVICE");
 //                    break;
 //                }
