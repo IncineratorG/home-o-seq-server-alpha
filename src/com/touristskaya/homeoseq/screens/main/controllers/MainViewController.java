@@ -5,7 +5,6 @@ import com.touristskaya.homeoseq.common.promise.Promise;
 import com.touristskaya.homeoseq.common.system_events_handler.SystemEventsHandler;
 import com.touristskaya.homeoseq.server.Server;
 import com.touristskaya.homeoseq.server.services.Services;
-import com.touristskaya.old_homoseq.homeoseq.common.service.Service;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 
