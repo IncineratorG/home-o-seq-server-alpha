@@ -1,33 +1,30 @@
 package com.touristskaya.homeoseq.server.services.cameras_service.actions_processor;
 
 import com.touristskaya.homeoseq.common.actions.action.Action;
+import com.touristskaya.homeoseq.common.actions.action_handler.ActionHandler;
 import com.touristskaya.homeoseq.common.actions.actions_dispatcher.ActionsDispatcher;
 import com.touristskaya.homeoseq.common.actions.actions_processor.ActionsProcessor;
 import com.touristskaya.homeoseq.common.notifications.notifications_dispatcher.NotificationsDispatcher;
 import com.touristskaya.homeoseq.server.services.cameras_service.common.cameras_manager.CamerasManager;
 import com.touristskaya.homeoseq.server.services.cameras_service.service_description.CamerasServiceDescription;
+import com.touristskaya.old_homoseq.homeoseq.common.system_events_handler.SystemEventsHandler;
 
-public class CamerasServiceActionsProcessor implements ActionsProcessor {
+public class CamerasServiceActionsProcessor implements ActionHandler {
     private ActionsDispatcher mActionsDispatcher;
-    private NotificationsDispatcher mNotificationDispatcher;
     private CamerasServiceDescription mServiceDescription;
     private CamerasManager mCamerasManager;
 
     public CamerasServiceActionsProcessor(ActionsDispatcher actionsDispatcher,
-                                          NotificationsDispatcher notificationsDispatcher,
                                           CamerasServiceDescription camerasServiceDescription,
                                           CamerasManager camerasManager) {
         mActionsDispatcher = actionsDispatcher;
-        mNotificationDispatcher = notificationsDispatcher;
         mServiceDescription = camerasServiceDescription;
         mCamerasManager = camerasManager;
     }
 
     @Override
-    public boolean process(Action action) {
-        if (action.getType().equals(mServiceDescription.actionTypes.STOP_SERVICE)) {
-            return true;
-        } else if (action.getType().equals(mServiceDescription.actionTypes.GET_IMAGE)) {
+    public void onAction(Action action) {
+        if (action.getType().equals(mServiceDescription.actionTypes.GET_IMAGE)) {
             action.complete(
                     mServiceDescription.actionResults.getImageActionResult("RESULT_IMAGE")
             );
@@ -44,9 +41,8 @@ public class CamerasServiceActionsProcessor implements ActionsProcessor {
                     )
             );
         } else if (action.getType().equals(mServiceDescription.actionTypes.TEST_ACTION)) {
+            SystemEventsHandler.onInfo("CAMERAS_SERVICE_THREAD: " + Thread.currentThread().getId());
             action.complete("STRING");
         }
-
-        return false;
     }
 }

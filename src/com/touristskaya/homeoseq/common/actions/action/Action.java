@@ -5,12 +5,14 @@ import com.touristskaya.homeoseq.common.system_events_handler.SystemEventsHandle
 
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.function.Consumer;
 
 public class Action {
     private String mType;
     private Object mPayload;
     private UUID mUuid;
     private Promise mCompletionPromise;
+    Consumer<Object> mCompleteConsumer;
 
     public Action(String type) {
         this.mType = type;
@@ -59,9 +61,25 @@ public class Action {
 
     @SuppressWarnings (value="unchecked")
     public void complete(Object value) {
-        if (mCompletionPromise != null) {
-            mCompletionPromise.resolve(value);
+        if (mCompleteConsumer != null) {
+            mCompleteConsumer.accept(value);
         }
+
+        if (mCompletionPromise != null) {
+            mCompletionPromise.setResult(value);
+        }
+
+//        if (mCompletionPromise != null) {
+//            mCompletionPromise.resolve(value);
+//        }
+    }
+
+    public void onComplete(Consumer<Object> consumer) {
+        mCompleteConsumer = consumer;
+    }
+
+    public Promise promise() {
+        return mCompletionPromise;
     }
 }
 

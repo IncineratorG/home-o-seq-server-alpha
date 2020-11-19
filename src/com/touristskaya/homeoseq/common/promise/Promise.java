@@ -18,6 +18,16 @@ public class Promise<T> {
         mError = null;
     }
 
+    public void setResult(T result) {
+        mResult = result;
+
+        try {
+            mResultQueue.put(result);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void resolve(T result) {
         mResult = result;
 
@@ -29,6 +39,12 @@ public class Promise<T> {
             mResultQueue.put(result);
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void resolveWithCurrentResult() {
+        if (mResultAcceptor != null) {
+            mResultAcceptor.accept(mResult);
         }
     }
 

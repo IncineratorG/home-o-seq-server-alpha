@@ -5,6 +5,7 @@ import com.touristskaya.homeoseq.common.promise.Promise;
 import com.touristskaya.homeoseq.common.system_events_handler.SystemEventsHandler;
 import com.touristskaya.homeoseq.server.Server;
 import com.touristskaya.homeoseq.server.services.Services;
+import com.touristskaya.old_homoseq.homeoseq.common.service.Service;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 
@@ -27,6 +28,11 @@ public class MainViewController<T> implements Initializable {
         leftButton.setOnAction((e) -> {
             SystemEventsHandler.onInfo("LEFT_BUTTON_CLICK");
 
+            // =====
+            ActionsDispatcher dispatcher = Server.get().getActionsDispatcher();
+            dispatcher.dispatch(Services.testService.actionCreators.makeTestTaskAction(new Promise<>()));
+            // =====
+
             // ===
 //            ActionsDispatcher dispatcher = Server.get().getActionsDispatcher();
 //
@@ -45,43 +51,43 @@ public class MainViewController<T> implements Initializable {
             // ===
 
             // ===
-            ActionsDispatcher dispatcher = Server.get().getActionsDispatcher();
-
-            for (int i = 0; i < 100000; ++i) {
-                Promise<String> resultPromise_1 = new Promise<>();
-                resultPromise_1.then(string -> {
-                    val.incrementAndGet();
-                    ++simpleVal;
-                });
-                Promise<String> resultPromise_2 = new Promise<>();
-                resultPromise_2.then(string -> {
-                    val.incrementAndGet();
-                    ++simpleVal;
-                });
-                Promise<String> resultPromise_3 = new Promise<>();
-                resultPromise_2.then(string -> {
-                    val.incrementAndGet();
-                    ++simpleVal;
-                });
-                Promise<String> resultPromise_4 = new Promise<>();
-                resultPromise_2.then(string -> {
-                    val.incrementAndGet();
-                    ++simpleVal;
-                });
-
-                dispatcher.dispatch(
-                        Services.testService.actionCreators.makeTestTaskAction(resultPromise_1)
-                );
-                dispatcher.dispatch(
-                        Services.camerasService.actionCreators.testAction(resultPromise_2)
-                );
-                dispatcher.dispatch(
-                        Services.testService.actionCreators.makeTestTaskAction(resultPromise_3)
-                );
-                dispatcher.dispatch(
-                        Services.camerasService.actionCreators.testAction(resultPromise_4)
-                );
-            }
+//            ActionsDispatcher dispatcher = Server.get().getActionsDispatcher();
+//
+//            for (int i = 0; i < 100000; ++i) {
+//                Promise<String> resultPromise_1 = new Promise<>();
+//                resultPromise_1.then(string -> {
+//                    val.incrementAndGet();
+//                    ++simpleVal;
+//                });
+//                Promise<String> resultPromise_2 = new Promise<>();
+//                resultPromise_2.then(string -> {
+//                    val.incrementAndGet();
+//                    ++simpleVal;
+//                });
+//                Promise<String> resultPromise_3 = new Promise<>();
+//                resultPromise_2.then(string -> {
+//                    val.incrementAndGet();
+//                    ++simpleVal;
+//                });
+//                Promise<String> resultPromise_4 = new Promise<>();
+//                resultPromise_2.then(string -> {
+//                    val.incrementAndGet();
+//                    ++simpleVal;
+//                });
+//
+//                dispatcher.dispatch(
+//                        Services.testService.actionCreators.makeTestTaskAction(resultPromise_1)
+//                );
+//                dispatcher.dispatch(
+//                        Services.camerasService.actionCreators.testAction(resultPromise_2)
+//                );
+//                dispatcher.dispatch(
+//                        Services.testService.actionCreators.makeTestTaskAction(resultPromise_3)
+//                );
+//                dispatcher.dispatch(
+//                        Services.camerasService.actionCreators.testAction(resultPromise_4)
+//                );
+//            }
             // ===
 
 //            SystemEventsHandler.onInfo("AFTER_1: " + Thread.currentThread().getId());

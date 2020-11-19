@@ -30,6 +30,8 @@ public class FirebaseCommunicationBridge extends Thread implements Communication
         mTestEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                SystemEventsHandler.onInfo("HERE");
+
                 if (dataSnapshot == null) {
                     SystemEventsHandler.onInfo("DATA_SNAPSHOT_IS_NULL");
                     return;
