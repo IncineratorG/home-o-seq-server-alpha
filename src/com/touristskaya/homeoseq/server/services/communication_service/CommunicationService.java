@@ -60,6 +60,7 @@ public class CommunicationService extends NewService {
     @Override
     protected void beforeStart() {
         SystemEventsHandler.onInfo("CommunicationService->start()");
+        mCommunicationManager.start();
     }
 
     @Override
