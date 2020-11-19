@@ -1,14 +1,10 @@
 package com.touristskaya.homeoseq.server.services.communication_service.common.client_requests_processor;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.touristskaya.homeoseq.common.actions.actions_dispatcher.ActionsDispatcher;
-import com.touristskaya.homeoseq.common.camera.Camera;
-import com.touristskaya.homeoseq.common.promise.Promise;
-import com.touristskaya.homeoseq.common.system_events_handler.SystemEventsHandler;
-import com.touristskaya.homeoseq.server.errors.Errors;
+import com.touristskaya.homeoseq.data.common.actions.actions_dispatcher.ActionsDispatcher;
+import com.touristskaya.homeoseq.data.common.camera.Camera;
+import com.touristskaya.homeoseq.data.common.promise.Promise;
+import com.touristskaya.homeoseq.data.common.system_events_handler.SystemEventsHandler;
+import com.touristskaya.homeoseq.data.specific.errors.Errors;
 import com.touristskaya.homeoseq.server.services.Services;
 import com.touristskaya.homeoseq.server.services.communication_service.common.client_request.ClientRequest;
 import com.touristskaya.homeoseq.server.services.communication_service.common.client_request.ClientRequestTypes;
@@ -18,9 +14,7 @@ import com.touristskaya.homeoseq.server.services.communication_service.common.co
 import com.touristskaya.homeoseq.server.services.communication_service.common.data_serializer.DataSerializer;
 
 import java.awt.image.BufferedImage;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ClientRequestsProcessor {
     private CommunicationManager mCommunicationManager;

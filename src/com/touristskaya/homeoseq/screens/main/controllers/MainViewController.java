@@ -1,8 +1,8 @@
 package com.touristskaya.homeoseq.screens.main.controllers;
 
-import com.touristskaya.homeoseq.common.actions.actions_dispatcher.ActionsDispatcher;
-import com.touristskaya.homeoseq.common.promise.Promise;
-import com.touristskaya.homeoseq.common.system_events_handler.SystemEventsHandler;
+import com.touristskaya.homeoseq.data.common.actions.actions_dispatcher.ActionsDispatcher;
+import com.touristskaya.homeoseq.data.common.promise.Promise;
+import com.touristskaya.homeoseq.data.common.system_events_handler.SystemEventsHandler;
 import com.touristskaya.homeoseq.server.Server;
 import com.touristskaya.homeoseq.server.services.Services;
 import javafx.fxml.Initializable;
@@ -168,10 +168,10 @@ public class MainViewController<T> implements Initializable {
 
 //package com.touristskaya.homeoseq.screens.main.controllers;
 //
-//import com.touristskaya.homeoseq.common.actions.actions_dispatcher.ActionsDispatcher;
-//import com.touristskaya.homeoseq.common.camera.Camera;
-//import com.touristskaya.homeoseq.common.promise.Promise;
-//import com.touristskaya.homeoseq.common.system_events_handler.SystemEventsHandler;
+//import com.touristskaya.homeoseq.data.common.actions.actions_dispatcher.ActionsDispatcher;
+//import com.touristskaya.homeoseq.data.common.camera.Camera;
+//import com.touristskaya.homeoseq.data.common.promise.Promise;
+//import com.touristskaya.homeoseq.data.common.system_events_handler.SystemEventsHandler;
 //import com.touristskaya.homeoseq.server.Server;
 //import com.touristskaya.homeoseq.server.services.Services;
 //import javafx.fxml.Initializable;

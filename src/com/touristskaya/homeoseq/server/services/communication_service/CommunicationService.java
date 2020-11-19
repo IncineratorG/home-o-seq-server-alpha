@@ -1,14 +1,9 @@
 package com.touristskaya.homeoseq.server.services.communication_service;
 
-import com.touristskaya.homeoseq.common.actions.action.Action;
-import com.touristskaya.homeoseq.common.actions.action_handler.ActionHandler;
-import com.touristskaya.homeoseq.common.actions.actions_buffer.ActionsBuffer;
-import com.touristskaya.homeoseq.common.actions.actions_dispatcher.ActionsDispatcher;
-import com.touristskaya.homeoseq.common.notifications.notifications_dispatcher.NotificationsDispatcher;
-import com.touristskaya.homeoseq.common.services.service.NewService;
-import com.touristskaya.homeoseq.common.services.service.Service;
-import com.touristskaya.homeoseq.common.system_events_handler.SystemEventsHandler;
-import com.touristskaya.homeoseq.server.server_actions_dispatcher.ServerActionsDispatcher;
+import com.touristskaya.homeoseq.data.common.actions.action_handler.ActionHandler;
+import com.touristskaya.homeoseq.data.common.services.service.Service;
+import com.touristskaya.homeoseq.data.common.system_events_handler.SystemEventsHandler;
+import com.touristskaya.homeoseq.data.specific.server.server_actions_dispatcher.ServerActionsDispatcher;
 import com.touristskaya.homeoseq.server.services.communication_service.common.client_requests_processor.ClientRequestsProcessor;
 import com.touristskaya.homeoseq.server.services.communication_service.common.communication_bridge.firebase_communication_bridge.FirebaseCommunicationBridge;
 import com.touristskaya.homeoseq.server.services.communication_service.common.communication_manager.CommunicationManager;
@@ -16,9 +11,8 @@ import com.touristskaya.homeoseq.server.services.communication_service.common.co
 import com.touristskaya.homeoseq.server.services.communication_service.service_description.CommunicationServiceDescription;
 
 import java.util.List;
-import java.util.concurrent.LinkedBlockingQueue;
 
-public class CommunicationService extends NewService {
+public class CommunicationService extends Service {
     private CommunicationServiceDescription mServiceDescription;
     private ServerActionsDispatcher mActionsDispatcher;
     private ActionHandler mActionsHandler;
@@ -73,13 +67,13 @@ public class CommunicationService extends NewService {
 
 //package com.touristskaya.homeoseq.server.services.communication_service;
 //
-//import com.touristskaya.homeoseq.common.actions.action.Action;
-//import com.touristskaya.homeoseq.common.actions.actions_buffer.ActionsBuffer;
-//import com.touristskaya.homeoseq.common.actions.actions_dispatcher.ActionsDispatcher;
-//import com.touristskaya.homeoseq.common.notifications.notifications_dispatcher.NotificationsDispatcher;
-//import com.touristskaya.homeoseq.common.services.service.Service;
-//import com.touristskaya.homeoseq.common.system_events_handler.SystemEventsHandler;
-//import com.touristskaya.homeoseq.server.server_actions_dispatcher.ServerActionsDispatcher;
+//import com.touristskaya.homeoseq.data.common.actions.action.Action;
+//import com.touristskaya.homeoseq.data.common.actions.actions_buffer.ActionsBuffer;
+//import com.touristskaya.homeoseq.data.common.actions.actions_dispatcher.ActionsDispatcher;
+//import com.touristskaya.homeoseq.data.common.notifications.notifications_dispatcher.NotificationsDispatcher;
+//import com.touristskaya.homeoseq.data.common.services.service.Service;
+//import com.touristskaya.homeoseq.data.common.system_events_handler.SystemEventsHandler;
+//import com.touristskaya.homeoseq.data.specific.server.server_actions_dispatcher.ServerActionsDispatcher;
 //import com.touristskaya.homeoseq.server.services.communication_service.common.client_requests_processor.ClientRequestsProcessor;
 //import com.touristskaya.homeoseq.server.services.communication_service.common.communication_bridge.firebase_communication_bridge.FirebaseCommunicationBridge;
 //import com.touristskaya.homeoseq.server.services.communication_service.common.communication_manager.CommunicationManager;

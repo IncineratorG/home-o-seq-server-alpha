@@ -2,7 +2,7 @@ package com.touristskaya.homeoseq.server.services.communication_service.common.c
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.touristskaya.homeoseq.common.system_events_handler.SystemEventsHandler;
+import com.touristskaya.homeoseq.data.common.system_events_handler.SystemEventsHandler;
 import com.touristskaya.homeoseq.server.services.communication_service.common.client_request.ClientRequest;
 import com.touristskaya.homeoseq.server.services.communication_service.common.client_request_parser.ClientRequestParser;
 

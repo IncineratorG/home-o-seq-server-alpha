@@ -1,6 +1,6 @@
 package com.touristskaya.homeoseq.server.services.cameras_service.common.cameras_manager;
 
-import com.touristskaya.homeoseq.common.camera.Camera;
+import com.touristskaya.homeoseq.data.common.camera.Camera;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;

@@ -1,7 +1,7 @@
 package com.touristskaya.homeoseq.server.services.cameras_service.service_description.action_results;
 
-import com.touristskaya.homeoseq.common.actions.action_results.ActionResults;
-import com.touristskaya.homeoseq.common.camera.Camera;
+import com.touristskaya.homeoseq.data.common.actions.action_results.ActionResults;
+import com.touristskaya.homeoseq.data.common.camera.Camera;
 
 import java.awt.image.BufferedImage;
 import java.util.List;

@@ -1,15 +1,15 @@
 package com.touristskaya.homeoseq.server.services.test_service;
 
-import com.touristskaya.homeoseq.common.actions.action_handler.ActionHandler;
-import com.touristskaya.homeoseq.common.services.service.NewService;
-import com.touristskaya.homeoseq.common.system_events_handler.SystemEventsHandler;
-import com.touristskaya.homeoseq.server.server_actions_dispatcher.ServerActionsDispatcher;
+import com.touristskaya.homeoseq.data.common.actions.action_handler.ActionHandler;
+import com.touristskaya.homeoseq.data.common.services.service.Service;
+import com.touristskaya.homeoseq.data.common.system_events_handler.SystemEventsHandler;
+import com.touristskaya.homeoseq.data.specific.server.server_actions_dispatcher.ServerActionsDispatcher;
 import com.touristskaya.homeoseq.server.services.test_service.actions_handler.TestServiceActionsHandler;
 import com.touristskaya.homeoseq.server.services.test_service.service_description.TestServiceDescription;
 
 import java.util.List;
 
-public class TestService extends NewService {
+public class TestService extends Service {
     private TestServiceDescription mServiceDescription;
     private ServerActionsDispatcher mActionsDispatcher;
     private ActionHandler mActionsHandler;

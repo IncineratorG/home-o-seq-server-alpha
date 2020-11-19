@@ -1,6 +1,6 @@
 package com.touristskaya.homeoseq.server.services.communication_service.common.communication_messages;
 
-import com.touristskaya.homeoseq.common.error.Error;
+import com.touristskaya.homeoseq.data.common.error.Error;
 import com.touristskaya.homeoseq.server.services.communication_service.common.server_message.ServerMessage;
 
 public class CommunicationMessages {

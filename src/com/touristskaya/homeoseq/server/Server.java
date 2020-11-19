@@ -1,10 +1,10 @@
 package com.touristskaya.homeoseq.server;
 
-import com.touristskaya.homeoseq.common.actions.action_handler.ActionHandler;
-import com.touristskaya.homeoseq.common.actions.actions_dispatcher.ActionsDispatcher;
-import com.touristskaya.homeoseq.common.services.service.NewService;
-import com.touristskaya.homeoseq.common.system_events_handler.SystemEventsHandler;
-import com.touristskaya.homeoseq.server.server_actions_dispatcher.ServerActionsDispatcher;
+import com.touristskaya.homeoseq.data.common.actions.action_handler.ActionHandler;
+import com.touristskaya.homeoseq.data.common.actions.actions_dispatcher.ActionsDispatcher;
+import com.touristskaya.homeoseq.data.common.services.service.Service;
+import com.touristskaya.homeoseq.data.common.system_events_handler.SystemEventsHandler;
+import com.touristskaya.homeoseq.data.specific.server.server_actions_dispatcher.ServerActionsDispatcher;
 import com.touristskaya.homeoseq.server.services.cameras_service.CamerasService;
 import com.touristskaya.homeoseq.server.services.communication_service.CommunicationService;
 import com.touristskaya.homeoseq.server.services.test_service.TestService;
@@ -13,12 +13,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class Server extends NewService {
+public class Server extends Service {
     private static Server mInstance;
     private static final String STOP_SERVER_ACTION = "STOP_SERVER_ACTION";
     private ActionHandler mActionHandler;
     private ServerActionsDispatcher mActionsDispatcher;
-    private List<NewService> mServices;
+    private List<Service> mServices;
 
     public static synchronized Server get() {
         if (mInstance != null) {
@@ -76,7 +76,7 @@ public class Server extends NewService {
 
     @Override
     protected void beforeStart() {
-        mServices.forEach(NewService::startService);
+        mServices.forEach(Service::startService);
     }
 
     @Override

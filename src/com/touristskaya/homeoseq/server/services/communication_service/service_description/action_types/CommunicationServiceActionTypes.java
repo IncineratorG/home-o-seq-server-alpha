@@ -1,6 +1,6 @@
 package com.touristskaya.homeoseq.server.services.communication_service.service_description.action_types;
 
-import com.touristskaya.homeoseq.common.actions.action_types.ActionTypes;
+import com.touristskaya.homeoseq.data.common.actions.action_types.ActionTypes;
 
 import java.util.Arrays;
 import java.util.List;

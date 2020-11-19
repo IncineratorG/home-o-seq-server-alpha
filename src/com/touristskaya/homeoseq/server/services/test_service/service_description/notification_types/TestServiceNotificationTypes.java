@@ -1,6 +1,6 @@
 package com.touristskaya.homeoseq.server.services.test_service.service_description.notification_types;
 
-import com.touristskaya.homeoseq.common.notifications.notification_types.NotificationTypes;
+import com.touristskaya.homeoseq.data.common.notifications.notification_types.NotificationTypes;
 
 import java.util.Arrays;
 import java.util.List;

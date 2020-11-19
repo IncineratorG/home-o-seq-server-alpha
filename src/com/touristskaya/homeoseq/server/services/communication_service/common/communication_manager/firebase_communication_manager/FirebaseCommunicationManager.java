@@ -1,6 +1,6 @@
 package com.touristskaya.homeoseq.server.services.communication_service.common.communication_manager.firebase_communication_manager;
 
-import com.touristskaya.homeoseq.common.system_events_handler.SystemEventsHandler;
+import com.touristskaya.homeoseq.data.common.system_events_handler.SystemEventsHandler;
 import com.touristskaya.homeoseq.server.services.communication_service.common.client_request.ClientRequest;
 import com.touristskaya.homeoseq.server.services.communication_service.common.client_request_parser.ClientRequestParser;
 import com.touristskaya.homeoseq.server.services.communication_service.common.client_request_parser.general_client_request_parser.GeneralClientRequestParser;

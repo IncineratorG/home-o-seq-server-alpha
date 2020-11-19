@@ -1,16 +1,16 @@
 package com.touristskaya.homeoseq.server.services.cameras_service;
 
-import com.touristskaya.homeoseq.common.actions.action_handler.ActionHandler;
-import com.touristskaya.homeoseq.common.services.service.NewService;
-import com.touristskaya.homeoseq.common.system_events_handler.SystemEventsHandler;
-import com.touristskaya.homeoseq.server.server_actions_dispatcher.ServerActionsDispatcher;
+import com.touristskaya.homeoseq.data.common.actions.action_handler.ActionHandler;
+import com.touristskaya.homeoseq.data.common.services.service.Service;
+import com.touristskaya.homeoseq.data.common.system_events_handler.SystemEventsHandler;
+import com.touristskaya.homeoseq.data.specific.server.server_actions_dispatcher.ServerActionsDispatcher;
 import com.touristskaya.homeoseq.server.services.cameras_service.actions_processor.CamerasServiceActionsProcessor;
 import com.touristskaya.homeoseq.server.services.cameras_service.common.cameras_manager.CamerasManager;
 import com.touristskaya.homeoseq.server.services.cameras_service.service_description.CamerasServiceDescription;
 
 import java.util.List;
 
-public class CamerasService extends NewService {
+public class CamerasService extends Service {
     private CamerasServiceDescription mServiceDescription;
     private ServerActionsDispatcher mActionsDispatcher;
     private ActionHandler mActionsHandler;
@@ -61,14 +61,14 @@ public class CamerasService extends NewService {
 
 //package com.touristskaya.homeoseq.server.services.cameras_service;
 //
-//import com.touristskaya.homeoseq.common.actions.action.Action;
-//import com.touristskaya.homeoseq.common.actions.actions_buffer.ActionsBuffer;
-//import com.touristskaya.homeoseq.common.actions.actions_dispatcher.ActionsDispatcher;
-//import com.touristskaya.homeoseq.common.actions.actions_processor.ActionsProcessor;
-//import com.touristskaya.homeoseq.common.notifications.notifications_dispatcher.NotificationsDispatcher;
-//import com.touristskaya.homeoseq.common.services.service.Service;
-//import com.touristskaya.homeoseq.common.system_events_handler.SystemEventsHandler;
-//import com.touristskaya.homeoseq.server.server_actions_dispatcher.ServerActionsDispatcher;
+//import com.touristskaya.homeoseq.data.common.actions.action.Action;
+//import com.touristskaya.homeoseq.data.common.actions.actions_buffer.ActionsBuffer;
+//import com.touristskaya.homeoseq.data.common.actions.actions_dispatcher.ActionsDispatcher;
+//import com.touristskaya.homeoseq.data.common.actions.actions_processor.ActionsProcessor;
+//import com.touristskaya.homeoseq.data.common.notifications.notifications_dispatcher.NotificationsDispatcher;
+//import com.touristskaya.homeoseq.data.common.services.service.Service;
+//import com.touristskaya.homeoseq.data.common.system_events_handler.SystemEventsHandler;
+//import com.touristskaya.homeoseq.data.specific.server.server_actions_dispatcher.ServerActionsDispatcher;
 //import com.touristskaya.homeoseq.server.services.cameras_service.actions_processor.CamerasServiceActionsProcessor;
 //import com.touristskaya.homeoseq.server.services.cameras_service.common.cameras_manager.CamerasManager;
 //import com.touristskaya.homeoseq.server.services.cameras_service.service_description.CamerasServiceDescription;

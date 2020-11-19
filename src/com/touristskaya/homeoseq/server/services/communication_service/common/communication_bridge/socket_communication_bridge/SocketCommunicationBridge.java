@@ -1,6 +1,6 @@
 package com.touristskaya.homeoseq.server.services.communication_service.common.communication_bridge.socket_communication_bridge;
 
-import com.touristskaya.homeoseq.common.system_events_handler.SystemEventsHandler;
+import com.touristskaya.homeoseq.data.common.system_events_handler.SystemEventsHandler;
 import com.touristskaya.homeoseq.server.services.communication_service.common.communication_bridge.CommunicationBridge;
 
 import java.io.*;

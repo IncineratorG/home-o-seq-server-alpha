@@ -1,11 +1,9 @@
 package com.touristskaya.homeoseq.server.services.cameras_service.actions_processor;
 
-import com.touristskaya.homeoseq.common.actions.action.Action;
-import com.touristskaya.homeoseq.common.actions.action_handler.ActionHandler;
-import com.touristskaya.homeoseq.common.actions.actions_dispatcher.ActionsDispatcher;
-import com.touristskaya.homeoseq.common.actions.actions_processor.ActionsProcessor;
-import com.touristskaya.homeoseq.common.notifications.notifications_dispatcher.NotificationsDispatcher;
-import com.touristskaya.homeoseq.common.system_events_handler.SystemEventsHandler;
+import com.touristskaya.homeoseq.data.common.actions.action.Action;
+import com.touristskaya.homeoseq.data.common.actions.action_handler.ActionHandler;
+import com.touristskaya.homeoseq.data.common.actions.actions_dispatcher.ActionsDispatcher;
+import com.touristskaya.homeoseq.data.common.system_events_handler.SystemEventsHandler;
 import com.touristskaya.homeoseq.server.services.cameras_service.common.cameras_manager.CamerasManager;
 import com.touristskaya.homeoseq.server.services.cameras_service.service_description.CamerasServiceDescription;
 

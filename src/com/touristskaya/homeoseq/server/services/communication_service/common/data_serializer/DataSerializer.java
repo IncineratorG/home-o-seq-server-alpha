@@ -1,8 +1,8 @@
 package com.touristskaya.homeoseq.server.services.communication_service.common.data_serializer;
 
 import com.google.gson.*;
-import com.touristskaya.homeoseq.common.camera.Camera;
-import com.touristskaya.homeoseq.common.system_events_handler.SystemEventsHandler;
+import com.touristskaya.homeoseq.data.common.camera.Camera;
+import com.touristskaya.homeoseq.data.common.system_events_handler.SystemEventsHandler;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
