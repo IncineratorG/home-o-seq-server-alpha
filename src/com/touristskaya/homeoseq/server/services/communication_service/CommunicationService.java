@@ -7,13 +7,13 @@ import com.touristskaya.homeoseq.common.actions.actions_dispatcher.ActionsDispat
 import com.touristskaya.homeoseq.common.notifications.notifications_dispatcher.NotificationsDispatcher;
 import com.touristskaya.homeoseq.common.services.service.NewService;
 import com.touristskaya.homeoseq.common.services.service.Service;
+import com.touristskaya.homeoseq.common.system_events_handler.SystemEventsHandler;
 import com.touristskaya.homeoseq.server.server_actions_dispatcher.ServerActionsDispatcher;
 import com.touristskaya.homeoseq.server.services.communication_service.common.client_requests_processor.ClientRequestsProcessor;
 import com.touristskaya.homeoseq.server.services.communication_service.common.communication_bridge.firebase_communication_bridge.FirebaseCommunicationBridge;
 import com.touristskaya.homeoseq.server.services.communication_service.common.communication_manager.CommunicationManager;
 import com.touristskaya.homeoseq.server.services.communication_service.common.communication_manager.firebase_communication_manager.FirebaseCommunicationManager;
 import com.touristskaya.homeoseq.server.services.communication_service.service_description.CommunicationServiceDescription;
-import com.touristskaya.old_homoseq.homeoseq.common.system_events_handler.SystemEventsHandler;
 
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;

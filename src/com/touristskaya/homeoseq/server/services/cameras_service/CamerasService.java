@@ -2,11 +2,11 @@ package com.touristskaya.homeoseq.server.services.cameras_service;
 
 import com.touristskaya.homeoseq.common.actions.action_handler.ActionHandler;
 import com.touristskaya.homeoseq.common.services.service.NewService;
+import com.touristskaya.homeoseq.common.system_events_handler.SystemEventsHandler;
 import com.touristskaya.homeoseq.server.server_actions_dispatcher.ServerActionsDispatcher;
 import com.touristskaya.homeoseq.server.services.cameras_service.actions_processor.CamerasServiceActionsProcessor;
 import com.touristskaya.homeoseq.server.services.cameras_service.common.cameras_manager.CamerasManager;
 import com.touristskaya.homeoseq.server.services.cameras_service.service_description.CamerasServiceDescription;
-import com.touristskaya.old_homoseq.homeoseq.common.system_events_handler.SystemEventsHandler;
 
 import java.util.List;
 
